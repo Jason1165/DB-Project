@@ -1,7 +1,7 @@
 CREATE TABLE stadium (
     stadiumID INT,
-    name CHAR(20),
-    location CHAR(20),
+    name CHAR(50),
+    location CHAR(50),
     capacity INT,
     revenue INT,
     PRIMARY KEY(stadiumId)
@@ -14,7 +14,7 @@ INSERT INTO stadium VALUES
 (4, 'Chase Center', 'San Francisco, California', 18064, 700),
 (5, 'Delta Center', 'Salt Lake City, Utah', 18306, 367),
 (6, 'Frost Bank Center', 'San Antonio, Texas', 18418, 9),
-(7, 'Golden 1 Center', 'Sacramento, California', 17,583, 665),
-(8, 'Kaseya Center', 'Miami, Florida', 19,600, 2),
-(9, 'Little Caesars Arena', 'Detroit, Michigan', 20,332, 100),
-(10, 'Madison Square Garden', 'New York City, New York', 19,812, 959);
+(7, 'Golden 1 Center', 'Sacramento, California', 17583, 665),
+(8, 'Kaseya Center', 'Miami, Florida', 19600, 2),
+(9, 'Little Caesars Arena', 'Detroit, Michigan', 20332, 100),
+(10, 'Madison Square Garden', 'New York City, New York', 19812, 959);
