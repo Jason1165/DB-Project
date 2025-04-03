@@ -1,12 +1,3 @@
---USE INSERTNAMEHERE
-
-CREATE TABLE sponsor (
-    sponsorID NUMERIC(6),
-    name VARCHAR(50),
-    money FLOAT,
-    PRIMARY KEY(sponsorID)
-);
-
 INSERT INTO sponsor VALUES
 (1, 'Ticketmaster', 5),  
 (2, 'Chick-fil-A', 1),  

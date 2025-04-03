@@ -1,12 +1,3 @@
-CREATE TABLE stadium (
-    stadiumID NUMERIC(6),
-    name CHAR(50),
-    location CHAR(50),
-    capacity INT,
-    revenue INT,
-    PRIMARY KEY(stadiumId)
-);
-
 INSERT INTO stadium VALUES
 (1, 'Ball Arena', 'Denver, Colorado', 19,200, 356),
 (2, 'Barclays Center', 'Brooklyn, New York', 17732, 750),

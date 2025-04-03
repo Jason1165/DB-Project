@@ -1,11 +1,3 @@
-CREATE TABLE streaming_service (
-    streamingID NUMERIC(6),
-    name VARCHAR(50),
-    price DECIMAL(5,2),
-    rating INT,
-    PRIMARY KEY (streamingID)
-);
-
 INSERT INTO streaming_service VALUES
 (1, 'DIRECTV Stream', 79.99, 4),
 (2, 'Hulu', 7.99, 4),
