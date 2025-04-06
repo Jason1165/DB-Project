@@ -9,7 +9,7 @@ BEGIN
   INNER JOIN Team t on p.teamID = t.teamID
   WHERE p.Name LIKE CONCAT('%', player_name, '%'); -- FUZZY SEARCH
 END$$
-DELIMITER;
+DELIMITER ;
 
 --- SUPPORT FOR GETTING PLAYERS
 DELIMITER $$
@@ -19,24 +19,28 @@ BEGIN
   FROM Player p
   INNER JOIN Team t on p.teamID = t.teamID;
 END$$
-DELIMITER;
+DELIMITER ;
 
 --- SUPPORT FOR SHOWING TEAMS IN A CONFERENCE
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetTeamsInConference(IN conference_name VARCHAR(100))
 BEGIN
-  SELECT t.teamID, t.Name, t.Championships_Won, t.playoffs_won, t.earnings, t.side as ConferenceSide
+  SELECT 
+    t.teamID, t.Name, t.Championships_Won, t.playoffs_won, t.earnings, 
+    c.side AS ConferenceSide
   FROM Team t
   INNER JOIN Conference c ON t.conferenceID = c.conferenceID
-  WHERE c.side LIKE conference_name;
+  WHERE c.side LIKE CONCAT('%', conference_name, '%');
 END$$
-DELIMITER;
+DELIMITER ;
+
 
 --- SUPPORT FOR SHOWING A TEAM'S INFO
+--- MIGHT BE MORE IN CASE IM FORGETTING SOME ATTRIBUTES
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
 BEGIN
-  SELECT --- MIGHT BE MORE IN CASE IM FORGETTING SOME ATTRIBUTES
+  SELECT
     t.TeamID, t.Name AS TeamName, t.Championships_Won, t.Playoffs_Won, t.Earnings,
     c.Name AS CoachName,
     s.Name AS StadiumName, s.Location AS StadiumLocation, s.Capacity AS StadiumCapacity,
@@ -47,16 +51,16 @@ BEGIN
   INNER JOIN Stadium s ON t.stadiumID = s.stadiumID
   INNER JOIN Sponsor sp ON t.sponsorID = sp.sponsorID
   INNER JOIN Conference co ON t.conferenceID = co.conferenceID
-  WHERE t.Name LIKE team_name;
+  WHERE t.Name LIKE CONCAT('%', team_name, '%');
 END$$
-DELIMITER;
+DELIMITER ;
 
 --- SUPPORT FOR MATCHES INFORMATION, currently using date depending on what we want this may be adjusted later on
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
 BEGIN
   SELECT 
-    m.m.matchID, m.score, m.Ticket_Cost, m.Date, 
+    m.matchID, m.score, m.Ticket_Cost, m.Date, 
     t1.Name AS HomeTeamName, 
     t2.Name AS VisitingTeamName, 
     s.Name AS StadiumName, 
@@ -71,7 +75,7 @@ BEGIN
   INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
   WHERE m.Date = match_date;
 END$$
-DELIMITER;
+DELIMITER ;
 
 -- FUNCTIONS
 DELIMITER $$
@@ -85,7 +89,7 @@ BEGIN
   JOIN Team t ON p.teamID = t.teamID
   WHERE t.name LIKE team_name;
   RETURN total;
-END $$
+END$$
 DELIMITER ;
 
 -- TRIGGERS
@@ -98,7 +102,7 @@ BEGIN
   SET Championships_Won = Championships_Won + 1
   WHERE TeamID = NEW.ChampionID;
 END@@
-DELIMITER;
+DELIMITER ;
 
 
 DELIMITER @@
