@@ -4,7 +4,7 @@ CREATE TABLE referee (
     name VARCHAR(100),
     age INT,
     start_date DATE,
-    end_date DATE,
+    end_date DATE NULL,
     PRIMARY KEY(refereeID),
     FOREIGN KEY(favoriteTeamID) REFERENCES team(teamID)
 );
