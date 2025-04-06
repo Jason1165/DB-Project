@@ -16,29 +16,97 @@ INSERT INTO coach VALUES
 (15, 'Don Nelson', 84, '1976-10-14', '2010-04-14', 6.1);
 
 
-INSERT INTO donation (donationID, teamID, sponsorID, amount) VALUES
-(1, 3, 7, 5),
-(2, 1, 2, 9),
-(3, 5, 4, 2),
-(4, 8, 6, 10),
-(5, 2, 1, 4),
-(6, 10, 3, 6),
-(7, 6, 9, 3),
-(8, 9, 8, 7),
-(9, 4, 10, 8),
-(10, 7, 5, 1);
+INSERT INTO stadium VALUES
+(1, 'Ball Arena', 'Denver, Colorado', 19200, 356),
+(2, 'Barclays Center', 'Brooklyn, New York', 17732, 750),
+(3, 'Capital One Arena', 'Washington, D.C.', 20356, 1000),
+(4, 'Chase Center', 'San Francisco, California', 18064, 700),
+(5, 'Delta Center', 'Salt Lake City, Utah', 18306, 367),
+(6, 'Frost Bank Center', 'San Antonio, Texas', 18418, 9),
+(7, 'Golden 1 Center', 'Sacramento, California', 17583, 665),
+(8, 'Kaseya Center', 'Miami, Florida', 19600, 2),
+(9, 'Little Caesars Arena', 'Detroit, Michigan', 20332, 100),
+(10, 'Madison Square Garden', 'New York City, New York', 19812, 959);
 
-INSERT INTO `match` VALUES
-(1, 1, 4, 1, 3, 1, 10, '112-108', 150.00, '2025-02-15'),
-(2, 8, 2, 8, 1, 2, 10, '105-98', 175.00, '2025-02-18'),
-(3, 10, 9, 10, 6, 3, 9, '118-101', 300.00, '2025-02-20'),
-(4, 6, 7, 6, 7, 4, 9, '97-104', 125.00, '2025-02-22'),
-(5, 3, 5, 3, 2, 5, 8, '115-110', 135.00, '2025-02-25'),
-(6, 4, 1, 4, 5, 6, 8, '121-119', 250.00, '2025-03-01'),
-(7, 2, 10, 2, 4, 7, 7, '99-112', 225.00, '2025-03-03'),
-(8, 5, 7, 5, 9, 8, 7, '108-95', 110.00, '2025-03-05'),
-(9, 9, 8, 9, 10, 1, 6, '102-113', 85.00, '2025-03-08'),
-(10, 6, 3, 6, 8, 2, 6, '125-98', 135.00, '2025-03-10');
+
+INSERT INTO sponsor VALUES
+(1, 'Ticketmaster', 5),  
+(2, 'Chick-fil-A', 1),  
+(3, 'Coca-Cola', 10),  
+(4, 'Quick Quack Car Wash', 0.5),  
+(5, 'Toyota', 3),  
+(6, 'Taco Bell', 2),  
+(7, 'State Farm', 13.7),  
+(8, 'Sports California', 0.5),  
+(9, 'Corona Extra', 1.5),  
+(10, 'UPS', 1);
+
+INSERT INTO conference VALUES 
+(1, 'Eastern Conference'),
+(2, 'Western Conference'),
+(3, 'Atlantic Coast Conference'),
+(4, 'Big Ten Conference'),
+(5, 'Big 12 Conference'),
+(6, 'Pac-12 Conference'),
+(7, 'Southeastern Conference'),
+(8, 'Big East Conference'),
+(9, 'American Athletic Conference'),
+(10, 'Mountain West Conference'),
+(11, 'Atlantic 10 Conference'),
+(12, 'West Coast Conference'),
+(13, 'Conference USA');
+
+
+INSERT INTO streaming_service VALUES
+(1, 'DIRECTV Stream', 79.99, 4),
+(2, 'Hulu', 7.99, 4),
+(3, 'NBA TV', 6.99, 4),
+(4, 'Sling TV', 61.00, 3),
+(5, 'YouTube TV', 82.99, 4),
+(6, 'ESPN+', 10.99, 4),
+(7, 'Fubo', 74.99, 4),
+(8, 'NBA League Pass', 14.99, 4),
+(9, 'Max', 16.99, 4),
+(10, 'Amazon Prime', 14.99, 4);
+
+
+INSERT INTO bracket VALUES
+(1, 8, 'Play-In 2020'),
+(2, 16, 'Play-Offs 2020'),
+(3, 8, 'Play-In 2021'),
+(4, 16, 'Play-Offs 2021'),
+(5, 8, 'Play-In 2022'),
+(6, 16, 'Play-Offs 2022'),
+(7, 8, 'Play-In 2023'),
+(8, 16, 'Play-Offs 2023'),
+(9, 8, 'Play-In 2024'),
+(10, 16, 'Play-Offs 2024');
+
+INSERT INTO team VALUES
+(1, 1, 1, 3, 2, 'Denver Nuggets', 1, 3, 350),
+(2, 2, 2, 1, 1, 'Brooklyn Nets', 0, 1, 310),
+(3, 3, 3, 5, 1, 'Washington Wizards', 1, 4, 320),
+(4, 4, 4, 9, 2, 'Golden State Warriors', 7, 12, 510),
+(5, 5, 5, 8, 2, 'Utah Jazz', 0, 2, 340),
+(6, 6, 6, 4, 2, 'San Antonio Spurs', 5, 10, 390),
+(7, 7, 7, 10, 2, 'Sacramento Kings', 0, 1, 300),
+(8, 8, 8, 2, 1, 'Miami Heat', 3, 9, 380),
+(9, 9, 9, 6, 1, 'Detroit Pistons', 3, 5, 290),
+(10, 10, 10, 7, 1, 'New York Knicks', 2, 8, 425);
+
+
+
+INSERT INTO referee VALUES
+(1, 4, 'Scott Foster', 57, '1994-09-30', NULL),
+(2, 8, 'Tony Brothers', 59, '1994-10-15', NULL),
+(3, 1, 'Marc Davis', 55, '1998-12-10', NULL),
+(4, 10, 'James Capers', 61, '1995-01-25', NULL),
+(5, 3, 'Zach Zarba', 49, '2003-04-12', NULL),
+(6, 7, 'Ed Malloy', 53, '2002-09-05', NULL),
+(7, 5, 'John Goble', 47, '2007-11-30', NULL),
+(8, 2, 'David Guthrie', 48, '2005-03-18', NULL),
+(9, 6, 'Joey Crawford', 72, '1977-05-12', '2016-04-10'),
+(10, 9, 'Dick Bavetta', 84, '1975-12-02', '2014-08-20');
 
 
 INSERT INTO player VALUES
@@ -64,6 +132,18 @@ INSERT INTO player VALUES
 (20, 9, 'Bill Russell', 'C', 6, 82, 89, 0.1);
 
 
+INSERT INTO donation (donationID, teamID, sponsorID, amount) VALUES
+(1, 3, 7, 5),
+(2, 1, 2, 9),
+(3, 5, 4, 2),
+(4, 8, 6, 10),
+(5, 2, 1, 4),
+(6, 10, 3, 6),
+(7, 6, 9, 3),
+(8, 9, 8, 7),
+(9, 4, 10, 8),
+(10, 7, 5, 1);
+
 INSERT INTO playoff VALUES
 (1, 2, 4, 4),
 (2, 4, 8, 8),
@@ -77,96 +157,16 @@ INSERT INTO playoff VALUES
 (10, 9, 5, 5);
 
 
-INSERT INTO referee VALUES
-(1, 4, 'Scott Foster', 57, '1994-09-30', NULL),
-(2, 8, 'Tony Brothers', 59, '1994-10-15', NULL),
-(3, 1, 'Marc Davis', 55, '1998-12-10', NULL),
-(4, 10, 'James Capers', 61, '1995-01-25', NULL),
-(5, 3, 'Zach Zarba', 49, '2003-04-12', NULL),
-(6, 7, 'Ed Malloy', 53, '2002-09-05', NULL),
-(7, 5, 'John Goble', 47, '2007-11-30', NULL),
-(8, 2, 'David Guthrie', 48, '2005-03-18', NULL),
-(9, 6, 'Joey Crawford', 72, '1977-05-12', '2016-04-10'),
-(10, 9, 'Dick Bavetta', 84, '1975-12-02', '2014-08-20');
-
-
-INSERT INTO team VALUES
-(1, 1, 1, 3, 2, 'Denver Nuggets', 1, 3, 350),
-(2, 2, 2, 1, 1, 'Brooklyn Nets', 0, 1, 310),
-(3, 3, 3, 5, 1, 'Washington Wizards', 1, 4, 320),
-(4, 4, 4, 9, 2, 'Golden State Warriors', 7, 12, 510),
-(5, 5, 5, 8, 2, 'Utah Jazz', 0, 2, 340),
-(6, 6, 6, 4, 2, 'San Antonio Spurs', 5, 10, 390),
-(7, 7, 7, 10, 2, 'Sacramento Kings', 0, 1, 300),
-(8, 8, 8, 2, 1, 'Miami Heat', 3, 9, 380),
-(9, 9, 9, 6, 1, 'Detroit Pistons', 3, 5, 290),
-(10, 10, 10, 7, 1, 'New York Knicks', 2, 8, 425);
-
-
-
-INSERT INTO bracket VALUES
-(1, 8, 'Play-In 2020'),
-(2, 16, 'Play-Offs 2020'),
-(3, 8, 'Play-In 2021'),
-(4, 16, 'Play-Offs 2021'),
-(5, 8, 'Play-In 2022'),
-(6, 16, 'Play-Offs 2022'),
-(7, 8, 'Play-In 2023'),
-(8, 16, 'Play-Offs 2023'),
-(9, 8, 'Play-In 2024'),
-(10, 16, 'Play-Offs 2024');
-
-INSERT INTO conference VALUES 
-(1, 'Eastern Conference'),
-(2, 'Western Conference'),
-(3, 'Atlantic Coast Conference'),
-(4, 'Big Ten Conference'),
-(5, 'Big 12 Conference'),
-(6, 'Pac-12 Conference'),
-(7, 'Southeastern Conference'),
-(8, 'Big East Conference'),
-(9, 'American Athletic Conference'),
-(10, 'Mountain West Conference'),
-(11, 'Atlantic 10 Conference'),
-(12, 'West Coast Conference'),
-(13, 'Conference USA');
-
-
-INSERT INTO sponsor VALUES
-(1, 'Ticketmaster', 5),  
-(2, 'Chick-fil-A', 1),  
-(3, 'Coca-Cola', 10),  
-(4, 'Quick Quack Car Wash', 0.5),  
-(5, 'Toyota', 3),  
-(6, 'Taco Bell', 2),  
-(7, 'State Farm', 13.7),  
-(8, 'Sports California', 0.5),  
-(9, 'Corona Extra', 1.5),  
-(10, 'UPS', 1);
-
-INSERT INTO stadium VALUES
-(1, 'Ball Arena', 'Denver, Colorado', 19200, 356),
-(2, 'Barclays Center', 'Brooklyn, New York', 17732, 750),
-(3, 'Capital One Arena', 'Washington, D.C.', 20356, 1000),
-(4, 'Chase Center', 'San Francisco, California', 18064, 700),
-(5, 'Delta Center', 'Salt Lake City, Utah', 18306, 367),
-(6, 'Frost Bank Center', 'San Antonio, Texas', 18418, 9),
-(7, 'Golden 1 Center', 'Sacramento, California', 17583, 665),
-(8, 'Kaseya Center', 'Miami, Florida', 19600, 2),
-(9, 'Little Caesars Arena', 'Detroit, Michigan', 20332, 100),
-(10, 'Madison Square Garden', 'New York City, New York', 19812, 959);
-
-
-INSERT INTO streaming_service VALUES
-(1, 'DIRECTV Stream', 79.99, 4),
-(2, 'Hulu', 7.99, 4),
-(3, 'NBA TV', 6.99, 4),
-(4, 'Sling TV', 61.00, 3),
-(5, 'YouTube TV', 82.99, 4),
-(6, 'ESPN+', 10.99, 4),
-(7, 'Fubo', 74.99, 4),
-(8, 'NBA League Pass', 14.99, 4),
-(9, 'Max', 16.99, 4),
-(10, 'Amazon Prime', 14.99, 4);
+INSERT INTO `match` VALUES
+(1, 1, 4, 1, 3, 1, 10, '112-108', 150.00, '2025-02-15'),
+(2, 8, 2, 8, 1, 2, 10, '105-98', 175.00, '2025-02-18'),
+(3, 10, 9, 10, 6, 3, 9, '118-101', 300.00, '2025-02-20'),
+(4, 6, 7, 6, 7, 4, 9, '97-104', 125.00, '2025-02-22'),
+(5, 3, 5, 3, 2, 5, 8, '115-110', 135.00, '2025-02-25'),
+(6, 4, 1, 4, 5, 6, 8, '121-119', 250.00, '2025-03-01'),
+(7, 2, 10, 2, 4, 7, 7, '99-112', 225.00, '2025-03-03'),
+(8, 5, 7, 5, 9, 8, 7, '108-95', 110.00, '2025-03-05'),
+(9, 9, 8, 9, 10, 1, 6, '102-113', 85.00, '2025-03-08'),
+(10, 6, 3, 6, 8, 2, 6, '125-98', 135.00, '2025-03-10');
 
 

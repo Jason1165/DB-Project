@@ -5,12 +5,17 @@ output="COMBINED_CREATE.sql"
 # Empty the output file if it exists
 > "$output"
 
-# Loop through all .sql and .SQL files, excluding the output file
-for file in *.sql *.sqL *.SQL; do
+# Define the files in a specific order
+files=("coach.sql" "stadium.sql" "sponsor.sql" "conference.sql" "streaming_service.sql" "bracket.sql" "team.sql" "referee.sql" "player.sql" "donation.sql" "playoff.sql" "match.sql" )  # List the files in the desired order
+
+# Loop through the list of files
+for file in "${files[@]}"; do
     if [[ -f "$file" && "$file" != "$output" ]]; then
         # echo "-- START OF: $file" >> "$output"
+        
         cat "$file" >> "$output"
         echo -e "\n" >> "$output"
+        
         # echo -e "\n-- END OF: $file\n" >> "$output"
         # echo -e "\n-- -------------------------\n" >> "$output"
     fi

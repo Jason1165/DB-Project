@@ -33,6 +33,7 @@ END$$
 DELIMITER;
 
 --- SUPPORT FOR SHOWING A TEAM'S INFO
+DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
 BEGIN
   SELECT --- MIGHT BE MORE IN CASE IM FORGETTING SOME ATTRIBUTES
@@ -48,20 +49,21 @@ BEGIN
   INNER JOIN Conference co ON t.conferenceID = co.conferenceID
   WHERE t.Name LIKE team_name;
 END$$
+DELIMITER;
 
 --- SUPPORT FOR MATCHES INFORMATION, currently using date depending on what we want this may be adjusted later on
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
 BEGIN
   SELECT 
-    m.MatchID, m.Score, m.Ticket_Cost, m.Date, 
+    m.m.matchID, m.score, m.Ticket_Cost, m.Date, 
     t1.Name AS HomeTeamName, 
     t2.Name AS VisitingTeamName, 
     s.Name AS StadiumName, 
     r.Name AS RefereeName, 
     ss.Name AS StreamingService,
     m.BracketID
-  FROM Match m
+  FROM `match` m
   INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
   INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
   INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
@@ -89,7 +91,7 @@ DELIMITER ;
 -- TRIGGERS
 DELIMITER @@
 CREATE TRIGGER update_championships_won
-AFTER INSERT ON Playoffs
+AFTER INSERT ON Playoff
 FOR EACH ROW
 BEGIN
   UPDATE Team

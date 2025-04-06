@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# List of the three files you want to combine
+file1="../CREATE/COMBINED_CREATE.sql"
+file2="../INSERT/COMBINED_INSERT.sql"
+file3="../COMMANDS/command.sql"
+
+# Output file name
+output="COMMANDS.sql"
+
+# Empty the output file if it exists
+> "$output"
+
+# Combine file1 into output
+if [[ -f "$file1" ]]; then
+    cat "$file1" >> "$output"
+    echo -e "\n-- -------------------------\n" >> "$output"
+else
+    echo "File not found: $file1"
+fi
+
+# Combine file2 into output
+if [[ -f "$file2" ]]; then
+    cat "$file2" >> "$output"
+    echo -e "\n-- -------------------------\n" >> "$output"
+else
+    echo "File not found: $file2"
+fi
+
+# Combine file3 into output
+if [[ -f "$file3" ]]; then
+    cat "$file3" >> "$output"
+    echo -e "\n-- -------------------------\n" >> "$output"
+else
+    echo "File not found: $file3"
+fi
