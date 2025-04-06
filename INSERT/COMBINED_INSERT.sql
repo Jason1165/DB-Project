@@ -15,6 +15,7 @@ INSERT INTO coach VALUES
 (14, 'Jerry Sloan', 78, '1988-12-09', '2011-02-10', 5.2),
 (15, 'Don Nelson', 84, '1976-10-14', '2010-04-14', 6.1);
 
+
 INSERT INTO donation (donationID, teamID, sponsorID, amount) VALUES
 (1, 3, 7, 5),
 (2, 1, 2, 9),
@@ -100,6 +101,7 @@ INSERT INTO team VALUES
 (8, 8, 8, 2, 1, 'Miami Heat', 3, 9, 380),
 (9, 9, 9, 6, 1, 'Detroit Pistons', 3, 5, 290),
 (10, 10, 10, 7, 1, 'New York Knicks', 2, 8, 425);
+
 
 
 INSERT INTO bracket VALUES
