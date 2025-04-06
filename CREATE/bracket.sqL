@@ -4,6 +4,3 @@ CREATE TABLE bracket (
     season VARCHAR(50),
     PRIMARY KEY (bracketID)
 );
-
--- year changed to season cause keyword
--- season can also be VARCHAR depending on design choice
