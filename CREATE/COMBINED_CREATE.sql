@@ -90,13 +90,13 @@ CREATE TABLE team (
 CREATE TABLE bracket (
     bracketID NUMERIC(6),
     numTeams INT,
-    season VARCHAR(50),
+    season VARCHAR(100),
     PRIMARY KEY (bracketID)
 );
 
 CREATE TABLE conference (
     conferenceID NUMERIC(6),
-    side VARCHAR(50),
+    side VARCHAR(100),
     PRIMARY KEY (conferenceID)
 );
 
@@ -113,15 +113,15 @@ CREATE TABLE donation (
 
 CREATE TABLE sponsor (
     sponsorID NUMERIC(6),
-    name VARCHAR(50),
+    name VARCHAR(100),
     money FLOAT,
     PRIMARY KEY(sponsorID)
 );
 
 CREATE TABLE stadium (
     stadiumID NUMERIC(6),
-    name CHAR(50),
-    location CHAR(50),
+    name VARCHAR(100),
+    location VARCHAR(100),
     capacity INT,
     revenue INT,
     PRIMARY KEY(stadiumId)
@@ -129,7 +129,7 @@ CREATE TABLE stadium (
 
 CREATE TABLE streaming_service (
     streamingID NUMERIC(6),
-    name VARCHAR(50),
+    name VARCHAR(100),
     price DECIMAL(5,2),
     rating INT,
     PRIMARY KEY (streamingID)

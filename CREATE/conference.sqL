@@ -1,5 +1,5 @@
 CREATE TABLE conference (
     conferenceID NUMERIC(6),
-    side VARCHAR(50),
+    side VARCHAR(100),
     PRIMARY KEY (conferenceID)
 );

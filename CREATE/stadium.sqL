@@ -1,7 +1,7 @@
 CREATE TABLE stadium (
     stadiumID NUMERIC(6),
-    name CHAR(50),
-    location CHAR(50),
+    name VARCHAR(100),
+    location VARCHAR(100),
     capacity INT,
     revenue INT,
     PRIMARY KEY(stadiumId)
