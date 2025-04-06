@@ -1,5 +1,5 @@
 INSERT INTO stadium VALUES
-(1, 'Ball Arena', 'Denver, Colorado', 19,200, 356),
+(1, 'Ball Arena', 'Denver, Colorado', 19200, 356),
 (2, 'Barclays Center', 'Brooklyn, New York', 17732, 750),
 (3, 'Capital One Arena', 'Washington, D.C.', 20356, 1000),
 (4, 'Chase Center', 'San Francisco, California', 18064, 700),

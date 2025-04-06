@@ -6,7 +6,7 @@ INSERT INTO conference VALUES
 (5, 'Big 12 Conference'),
 (6, 'Pac-12 Conference'),
 (7, 'Southeastern Conference'),
-(8, 'Big East Conference')
+(8, 'Big East Conference'),
 (9, 'American Athletic Conference'),
 (10, 'Mountain West Conference'),
 (11, 'Atlantic 10 Conference'),

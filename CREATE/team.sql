@@ -4,6 +4,7 @@ CREATE TABLE team (
     stadiumID NUMERIC(6),
     sponsorID NUMERIC(6),
     conferenceID NUMERIC(6),
+    name VARCHAR(100),
     championships_won INT,
     playoffs_won INT,
     earnings FLOAT,
