@@ -25,3 +25,17 @@ BEGIN
   WHERE TeamID = NEW.ChampionID;
 END;
 
+DELIMITER @@
+
+CREATE TRIGGER new_donation
+AFTER INSERT ON donation
+FOR EACH ROW
+BEGIN
+  UPDATE sponsor
+  SET money = money + NEW.amount
+  WHERE sponsorID = NEW.sponsorID;
+  UPDATE team 
+  SET earnings = earnings + new.amount
+  WHERE teamID = NEW.teamID;
+END@@
+DELIMITER ;
