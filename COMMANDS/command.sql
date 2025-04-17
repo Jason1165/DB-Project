@@ -118,3 +118,19 @@ BEGIN
   WHERE teamID = NEW.teamID;
 END@@
 DELIMITER ;
+
+DROP TRIGGER IF EXISTS ratingAdded; --For testing purposes
+DELIMITER $$
+CREATE TRIGGER ratingAdded
+AFTER INSERT ON rating
+FOR EACH ROW 
+BEGIN
+    INSERT INTO ratingAuditLog (Date, Time, u_id, streamingID) VALUES
+    (CURRENT_DATE, CURRENT_TIMESTAMP, NEW.u_id, NEW.streamingID);
+
+    UPDATE streaming_service 
+    SET rating = (rating + NEW.score)/(numRatings + 1),
+    numRatings = numRatings + 1
+    WHERE streamingID = NEW.streamingID;
+END$$
+DELIMITER;
