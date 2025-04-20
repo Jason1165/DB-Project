@@ -6,7 +6,7 @@ output="COMBINED_CREATE.sql"
 > "$output"
 
 # Define the files in a specific order
-files=("coach.sql" "stadium.sql" "sponsor.sql" "conference.sql" "streaming_service.sql" "bracket.sql" "team.sql" "referee.sql" "player.sql" "donation.sql" "playoff.sql" "match.sql" )  # List the files in the desired order
+files=("coach.sql" "stadium.sql" "sponsor.sql" "conference.sql" "streaming_service.sql" "bracket.sql" "team.sql" "referee.sql" "player.sql" "donation.sql" "playoff.sql" "match.sql" "user.sql" "rating.sql" "ratingAuditLog.sql")  # List the files in the desired order
 
 # Loop through the list of files
 for file in "${files[@]}"; do

@@ -36,7 +36,8 @@ CREATE TABLE streaming_service (
     streamingID NUMERIC(6),
     name VARCHAR(100),
     price DECIMAL(5,2),
-    rating INT,
+    rating FLOAT,
+    numRatings INT,
     PRIMARY KEY (streamingID)
 );
 
@@ -134,11 +135,14 @@ CREATE TABLE `match` (
     FOREIGN KEY(bracketID) REFERENCES bracket(bracketID)
 );
 
-CREATE TABLE  user (
+
+CREATE TABLE user (
     u_id INT AUTO_INCREMENT,
-    username VARCHAR(25),
+    username VARCHAR(25) UNIQUE,
+    password VARCHAR(255),
     PRIMARY KEY(u_id)
 );
+
 
 CREATE TABLE rating (
     rid INT AUTO_INCREMENT,
@@ -160,3 +164,4 @@ CREATE TABLE ratingAuditLog (
     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
     PRIMARY KEY(auditNum)
 );
+

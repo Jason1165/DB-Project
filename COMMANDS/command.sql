@@ -93,6 +93,7 @@ END$$
 DELIMITER ;
 
 -- TRIGGERS
+DROP TRIGGER IF EXISTS update_championships_won;
 DELIMITER @@
 CREATE TRIGGER update_championships_won
 AFTER INSERT ON Playoff
@@ -105,6 +106,7 @@ END@@
 DELIMITER ;
 
 
+DROP TRIGGER IF EXISTS new_donation;
 DELIMITER @@
 CREATE TRIGGER new_donation
 AFTER INSERT ON donation
@@ -117,9 +119,9 @@ BEGIN
   SET earnings = earnings + new.amount
   WHERE teamID = NEW.teamID;
 END@@
-DELIMITER ;
+DELIMITER;
 
-DROP TRIGGER IF EXISTS ratingAdded; --For testing purposes
+DROP TRIGGER IF EXISTS ratingAdded; 
 DELIMITER $$
 CREATE TRIGGER ratingAdded
 AFTER INSERT ON rating
@@ -127,7 +129,6 @@ FOR EACH ROW
 BEGIN
     INSERT INTO ratingAuditLog (Date, Time, u_id, streamingID) VALUES
     (CURRENT_DATE, CURRENT_TIMESTAMP, NEW.u_id, NEW.streamingID);
-
     UPDATE streaming_service 
     SET rating = (rating + NEW.score)/(numRatings + 1),
     numRatings = numRatings + 1

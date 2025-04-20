@@ -69,7 +69,6 @@ INSERT INTO streaming_service VALUES
 (9, 'Max', 16.99, 0, 0),
 (10, 'Amazon Prime', 14.99, 0, 0);
 
-
 INSERT INTO bracket VALUES
 (1, 8, 'Play-In 2020'),
 (2, 16, 'Play-Offs 2020'),
