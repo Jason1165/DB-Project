@@ -57,7 +57,7 @@ def signup():
         execute_query(
             "INSERT INTO user (username, password) VALUES (%s, %s)",
             (username, hashed_password),
-            COMMIT = True
+            commit = True
         )
         return redirect(url_for('login'))
 
