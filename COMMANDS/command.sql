@@ -119,7 +119,7 @@ BEGIN
   SET earnings = earnings + new.amount
   WHERE teamID = NEW.teamID;
 END@@
-DELIMITER;
+DELIMITER ;
 
 DROP TRIGGER IF EXISTS ratingAdded; 
 DELIMITER $$
@@ -127,11 +127,50 @@ CREATE TRIGGER ratingAdded
 AFTER INSERT ON rating
 FOR EACH ROW 
 BEGIN
-    INSERT INTO ratingAuditLog (Date, Time, u_id, streamingID) VALUES
-    (CURRENT_DATE, CURRENT_TIMESTAMP, NEW.u_id, NEW.streamingID);
+    INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+    (CURRENT_DATE, CURRENT_TIMESTAMP, "INSERT", NEW.score, NEW.u_id, NEW.streamingID);
+
     UPDATE streaming_service 
     SET rating = (rating + NEW.score)/(numRatings + 1),
     numRatings = numRatings + 1
     WHERE streamingID = NEW.streamingID;
 END$$
-DELIMITER;
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS ratingUpdated;
+DELIMITER $$
+CREATE TRIGGER ratingUpdated 
+AFTER UPDATE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "UPDATE", NEW.score, NEW.u_id, NEW.streamingID);
+
+  UPDATE streaming_service
+  SET rating = ((rating * numRatings) - OLD.score + NEW.score)/numRatings
+  WHERE streamingID = NEW.streamingID;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS ratingDeleted;
+DELIMITER $$
+CREATE TRIGGER ratingDeleted 
+AFTER DELETE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "DELETE", OLD.u_id, OLD.streamingID);
+  
+  UPDATE streaming_service
+  SET rating = CASE 
+    WHEN (numRatings - 1) = 0 THEN 0
+    ELSE ((rating * numRatings) - OLD.score) / (numRatings - 1)
+  END,
+  numRatings = numRatings - 1
+  WHERE streamingID = OLD.streamingID;
+
+  UPDATE streaming_service 
+  SET rating = 0
+  WHERE numRatings = 0;
+END$$
+DELIMITER ;
