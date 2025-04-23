@@ -26,23 +26,25 @@ def execute_query(query, params = None, fetchone = False, fetchall = False, comm
         result = cursor.fetchone()
     elif fetchall:
         result = cursor.fetchall()
-
     if commit:
         mysql.connection.commit()
-
     cursor.close()
     return result
 
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if 'user' in session:
+        return render_template('search.html')
+    else:
+        return redirect(url_for('login'))
+
 
 @app.route("/register", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
 
         existing_user = execute_query (
             "SELECT * FROM user WHERE username = %s",
@@ -60,14 +62,14 @@ def signup():
             commit = True
         )
         return redirect(url_for('login'))
-
     return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
 
         user = execute_query(
             "SELECT * FROM user WHERE username = %s",
@@ -78,11 +80,35 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user_id'] = user['u_id']
             session['username'] = user['username']
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('search'))
         else:
             return "Invalid username or password.", 401
-
     return render_template('login.html')
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # ⬅️ protect the dashboard
+
+    player_data = None
+
+    if request.method == 'POST':
+        player_name = request.form.get('player_name')
+
+        player_data = execute_query(
+            "CALL GetPlayerByName(%s)",
+            (f"%{player_name}%",),
+            fetchall=True
+        )
+
+    return render_template('search.html', player_data=player_data)
 
 
 if __name__ == '__main__':
