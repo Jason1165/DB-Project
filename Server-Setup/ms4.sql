@@ -1,5 +1,5 @@
 CREATE TABLE coach (
-    coachID NUMERIC(6),
+    coachID INT AUTO_INCREMENT,
     name VARCHAR(100),
     age INT,
     start_date DATE,
@@ -10,7 +10,7 @@ CREATE TABLE coach (
 
 
 CREATE TABLE stadium (
-    stadiumID NUMERIC(6),
+    stadiumID INT AUTO_INCREMENT,
     name VARCHAR(100),
     location VARCHAR(100),
     capacity INT,
@@ -19,21 +19,21 @@ CREATE TABLE stadium (
 );
 
 CREATE TABLE sponsor (
-    sponsorID NUMERIC(6),
+    sponsorID INT AUTO_INCREMENT,
     name VARCHAR(100),
     money FLOAT,
     PRIMARY KEY(sponsorID)
 );
 
 CREATE TABLE conference (
-    conferenceID NUMERIC(6),
+    conferenceID INT AUTO_INCREMENT,
     side VARCHAR(100),
     PRIMARY KEY (conferenceID)
 );
 
 
 CREATE TABLE streaming_service (
-    streamingID NUMERIC(6),
+    streamingID INT AUTO_INCREMENT,
     name VARCHAR(100),
     price DECIMAL(5,2),
     rating FLOAT,
@@ -42,18 +42,18 @@ CREATE TABLE streaming_service (
 );
 
 CREATE TABLE bracket (
-    bracketID NUMERIC(6),
+    bracketID INT AUTO_INCREMENT,
     numTeams INT,
     season VARCHAR(100),
     PRIMARY KEY (bracketID)
 );
 
 CREATE TABLE team (
-    teamID NUMERIC(6),
-    coachID NUMERIC(6),
-    stadiumID NUMERIC(6),
-    sponsorID NUMERIC(6),
-    conferenceID NUMERIC(6),
+    teamID INT AUTO_INCREMENT,
+    coachID INT,
+    stadiumID INT,
+    sponsorID INT,
+    conferenceID INT,
     name VARCHAR(100),
     championships_won INT,
     playoffs_won INT,
@@ -67,8 +67,8 @@ CREATE TABLE team (
 
 
 CREATE TABLE referee (
-    refereeID NUMERIC(6),
-    favoriteTeamID NUMERIC(6),
+    refereeID INT AUTO_INCREMENT,
+    favoriteTeamID INT,
     name VARCHAR(100),
     age INT,
     start_date DATE,
@@ -79,8 +79,8 @@ CREATE TABLE referee (
 
 
 CREATE TABLE player (
-    playerID NUMERIC(6),
-    teamID NUMERIC(6),
+    playerID INT AUTO_INCREMENT,
+    teamID INT,
     name VARCHAR(100),
     position VARCHAR(20),
     number INT,
@@ -93,9 +93,9 @@ CREATE TABLE player (
 
 
 CREATE TABLE donation (
-    donationID NUMERIC(6),
-    teamID NUMERIC(6) NOT NULL,
-    sponsorID NUMERIC(6) NOT NULL,
+    donationID INT AUTO_INCREMENT,
+    teamID INT NOT NULL,
+    sponsorID INT NOT NULL,
     amount INT,
     PRIMARY KEY (donationID),
     FOREIGN KEY (teamID) REFERENCES team(teamID),
@@ -103,10 +103,10 @@ CREATE TABLE donation (
 );
 
 CREATE TABLE playoff (
-    playoffID NUMERIC(6),
-    bracketID NUMERIC(6),
-    championID NUMERIC(6),
-    MVP NUMERIC(6),
+    playoffID INT AUTO_INCREMENT,
+    bracketID INT,
+    championID INT,
+    MVP INT,
     PRIMARY KEY(playoffID),
     FOREIGN KEY(bracketID) REFERENCES bracket(bracketID),
     FOREIGN KEY(championID) REFERENCES team(teamID),
@@ -116,13 +116,13 @@ CREATE TABLE playoff (
 
 -- "match" is a reserved keyword
 CREATE TABLE `match` (
-    matchID NUMERIC(6),
-    homeTeamID NUMERIC(6),
-    visitingTeamID NUMERIC(6),
-    stadiumID NUMERIC(6),
-    streamingID NUMERIC(6),
-    refereeID NUMERIC(6),
-    bracketID NUMERIC(6),
+    matchID INT AUTO_INCREMENT,
+    homeTeamID INT,
+    visitingTeamID INT,
+    stadiumID INT,
+    streamingID INT,
+    refereeID INT,
+    bracketID INT,
     score VARCHAR(15),
     ticket_cost FLOAT,
     date DATE,
@@ -145,21 +145,22 @@ CREATE TABLE user (
 
 
 CREATE TABLE rating (
-    rid INT AUTO_INCREMENT,
     score FLOAT,
     u_id INT,
-    streamingID NUMERIC(6),
+    streamingID INT,
     FOREIGN KEY(u_id) REFERENCES user(u_id),
     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
-    PRIMARY KEY(rid)
+    PRIMARY KEY(u_id, streamingID)
 );
 
 CREATE TABLE ratingAuditLog (
     auditNum INT NOT NULL AUTO_INCREMENT,
     Date DATE,
     Time TIME,
+    Type VARCHAR(10),
     u_id INT,
-    streamingID NUMERIC(6),
+    streamingID INT,
+    score FLOAT,
     FOREIGN KEY(u_id) REFERENCES user(u_id),
     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
     PRIMARY KEY(auditNum)
@@ -348,10 +349,32 @@ INSERT INTO `match` VALUES
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.Name as team_name
+  SELECT p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM Player p
   INNER JOIN Team t on p.teamID = t.teamID
   WHERE p.Name LIKE CONCAT('%', player_name, '%'); -- FUZZY SEARCH
+END$$
+DELIMITER ;
+
+--- 
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
+BEGIN
+  SELECT p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE t.Name LIKE CONCAT('%', team_name, '%'); -- FUZZY SEARCH
+END$$
+DELIMITER ;
+
+---
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
+BEGIN
+  SELECT p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE p.Position LIKE CONCAT('%', position_name, '%'); -- FUZZY SEARCH
 END$$
 DELIMITER ;
 
@@ -437,6 +460,7 @@ END$$
 DELIMITER ;
 
 -- TRIGGERS
+DROP TRIGGER IF EXISTS update_championships_won;
 DELIMITER @@
 CREATE TRIGGER update_championships_won
 AFTER INSERT ON Playoff
@@ -449,6 +473,7 @@ END@@
 DELIMITER ;
 
 
+DROP TRIGGER IF EXISTS new_donation;
 DELIMITER @@
 CREATE TRIGGER new_donation
 AFTER INSERT ON donation
@@ -463,21 +488,58 @@ BEGIN
 END@@
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS ratingAdded; --For testing purposes
+DROP TRIGGER IF EXISTS ratingAdded; 
 DELIMITER $$
 CREATE TRIGGER ratingAdded
 AFTER INSERT ON rating
 FOR EACH ROW 
 BEGIN
-    INSERT INTO ratingAuditLog (Date, Time, u_id, streamingID) VALUES
-    (CURRENT_DATE, CURRENT_TIMESTAMP, NEW.u_id, NEW.streamingID);
+    INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+    (CURRENT_DATE, CURRENT_TIMESTAMP, "INSERT", NEW.score, NEW.u_id, NEW.streamingID);
 
     UPDATE streaming_service 
     SET rating = (rating + NEW.score)/(numRatings + 1),
     numRatings = numRatings + 1
     WHERE streamingID = NEW.streamingID;
 END$$
-DELIMITER;
+DELIMITER ;
 
+DROP TRIGGER IF EXISTS ratingUpdated;
+DELIMITER $$
+CREATE TRIGGER ratingUpdated 
+AFTER UPDATE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "UPDATE", NEW.score, NEW.u_id, NEW.streamingID);
+
+  UPDATE streaming_service
+  SET rating = ((rating * numRatings) - OLD.score + NEW.score)/numRatings
+  WHERE streamingID = NEW.streamingID;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS ratingDeleted;
+DELIMITER $$
+CREATE TRIGGER ratingDeleted 
+AFTER DELETE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "DELETE", OLD.u_id, OLD.streamingID);
+  
+  UPDATE streaming_service
+  SET rating = CASE 
+    WHEN (numRatings - 1) = 0 THEN 0
+    ELSE ((rating * numRatings) - OLD.score) / (numRatings - 1)
+  END,
+  numRatings = numRatings - 1
+  WHERE streamingID = OLD.streamingID;
+
+  UPDATE streaming_service 
+  SET rating = 0
+  WHERE numRatings = 0;
+END$$
+DELIMITER ;
 -- -------------------------
 

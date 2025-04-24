@@ -1,6 +1,6 @@
 CREATE TABLE referee (
-    refereeID NUMERIC(6),
-    favoriteTeamID NUMERIC(6),
+    refereeID INT AUTO_INCREMENT,
+    favoriteTeamID INT,
     name VARCHAR(100),
     age INT,
     start_date DATE,

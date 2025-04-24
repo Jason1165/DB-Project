@@ -1,8 +1,8 @@
 CREATE TABLE playoff (
-    playoffID NUMERIC(6),
-    bracketID NUMERIC(6),
-    championID NUMERIC(6),
-    MVP NUMERIC(6),
+    playoffID INT AUTO_INCREMENT,
+    bracketID INT,
+    championID INT,
+    MVP INT,
     PRIMARY KEY(playoffID),
     FOREIGN KEY(bracketID) REFERENCES bracket(bracketID),
     FOREIGN KEY(championID) REFERENCES team(teamID),

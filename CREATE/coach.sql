@@ -1,5 +1,5 @@
 CREATE TABLE coach (
-    coachID NUMERIC(6),
+    coachID INT AUTO_INCREMENT,
     name VARCHAR(100),
     age INT,
     start_date DATE,

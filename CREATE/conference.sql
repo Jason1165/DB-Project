@@ -1,5 +1,5 @@
 CREATE TABLE conference (
-    conferenceID NUMERIC(6),
+    conferenceID INT AUTO_INCREMENT,
     side VARCHAR(100),
     PRIMARY KEY (conferenceID)
 );

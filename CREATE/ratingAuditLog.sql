@@ -4,7 +4,7 @@ CREATE TABLE ratingAuditLog (
     Time TIME,
     Type VARCHAR(10),
     u_id INT,
-    streamingID NUMERIC(6),
+    streamingID INT,
     score FLOAT,
     FOREIGN KEY(u_id) REFERENCES user(u_id),
     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),

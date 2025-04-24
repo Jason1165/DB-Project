@@ -1,6 +1,6 @@
 CREATE TABLE player (
-    playerID NUMERIC(6),
-    teamID NUMERIC(6),
+    playerID INT AUTO_INCREMENT,
+    teamID INT,
     name VARCHAR(100),
     position VARCHAR(20),
     number INT,
