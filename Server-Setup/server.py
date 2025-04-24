@@ -95,18 +95,30 @@ def logout():
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     if 'user_id' not in session:
-        return redirect(url_for('login'))  # ⬅️ protect the dashboard
+        return redirect(url_for('login'))
+    
+    print(session['user_id'])
 
     player_data = None
 
     if request.method == 'POST':
-        player_name = request.form.get('player_name')
+        search_value = request.form.get('player_name')
+        search_field = request.form.get('search_field')
 
-        player_data = execute_query(
-            "CALL GetPlayerByName(%s)",
-            (f"%{player_name}%",),
-            fetchall=True
-        )
+        procedures = {
+            'name': 'GetPlayerByName',
+            'team': 'GetPlayerByTeam',
+            'position': 'GetPlayerByPosition',
+        }
+
+        procedure_name = procedures.get(search_field)
+
+        if procedure_name:
+            player_data = execute_query(
+                f"CALL {procedure_name}(%s)",
+                (f"%{search_value}%",),
+                fetchall=True
+            )
 
     return render_template('search.html', player_data=player_data)
 
