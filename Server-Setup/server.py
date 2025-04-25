@@ -35,7 +35,7 @@ def execute_query(query, params = None, fetchone = False, fetchall = False, comm
 @app.route("/")
 def index():
     if 'user' in session:
-        return render_template('search.html')
+        return render_template('playerSearch.html')
     else:
         return redirect(url_for('login'))
 
@@ -66,6 +66,22 @@ def signup():
             (username, hashed_password),
             commit = True
         )
+
+        #execute_query messes up when trying to grant users roles, tried cursor approach
+        cursor = mysql.connection.cursor()
+        try:
+            cursor.execute(f"CREATE USER IF NOT EXISTS `{username}`@'%' IDENTIFIED BY %s", (password,))
+        except Exception as e:
+            print("User creation error:", e)
+
+        try:
+            cursor.execute(f"GRANT Suser TO `{username}`@'%'")
+        except Exception as e:
+            print("Grant error:", e)
+
+        mysql.connection.commit()
+        cursor.close()
+
         return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -125,7 +141,7 @@ def search():
                 (f"%{search_value}%",),
                 fetchall=True
             )
-    return render_template('search.html', player_data=player_data)
+    return render_template('playerSearch.html', player_data=player_data)
 
 
 @app.route('/streaming_services')
