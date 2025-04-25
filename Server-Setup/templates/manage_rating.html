@@ -5,18 +5,35 @@
   <title>Ratings</title>
 </head>
 <body>
-    <h2>Ratings</h2>
+  <div style="text-align: right;">
+    <a href="/logout">Logout</a>
+  </div>
+  <h2>Ratings</h2>
+  {% if my_rating %}
+    <p><strong>Your Rating:</strong> {{ my_rating.score }}</p>
 
     <form method="post">
-    <label>Rating:</label>
-    <input type="number" name="rating" min="1" max="5" value="{{ my_rating.rating if my_rating else '' }}" required>
-    <input type="submit" value="{{ 'Update' if my_rating else 'Submit' }} Rating">
+      <label>Update Rating:</label>
+      <input type="number" name="rating" min="1" max="5" value="{{ my_rating.score }}" required>
+      <input type="submit" value="Update Rating">
     </form>
 
-    <h3>All Ratings</h3>
-    <ul>
+    <form method="post" action="{{ url_for('delete_rating', service_id=service_id) }}">
+      <button type="submit">Delete Rating</button>
+    </form>
+  {% else %}
+    <form method="post">
+      <label>Rating:</label>
+      <input type="number" name="rating" min="1" max="5" required>
+      <input type="submit" value="Submit Rating">
+    </form>
+  {% endif %}
+
+  <h3>All Ratings</h3>
+  <ul>
     {% for r in ratings %}
-        <li><strong>{{ r.username }}:</strong> {{ r.score }}</li>
+      <li><strong>{{ r.username }}:</strong> {{ r.score }}</li>
     {% endfor %}
-    </ul>
+  </ul>
 </body>
+</html>

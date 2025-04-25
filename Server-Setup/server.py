@@ -176,7 +176,8 @@ def streaming_services():
     services = execute_query("SELECT * FROM Streaming_Service", fetchall=True)
     return render_template('streaming_services.html', services=services)
 
-@app.route('/streaming_service/<int:service_id>', methods=['GET', 'POST'])
+
+@app.route('/streaming_services/<int:service_id>', methods=['GET', 'POST'])
 def manage_rating(service_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
@@ -184,9 +185,7 @@ def manage_rating(service_id):
     user_id = session['user_id']
 
     if request.method == 'POST':
-        score = request.form.get('rating')
-        comment = request.form.get('comment')
-
+        score = int(request.form.get('rating'))
         existing = execute_query(
             "SELECT * FROM Rating WHERE u_id = %s AND streamingID = %s",
             (user_id, service_id),
@@ -219,6 +218,23 @@ def manage_rating(service_id):
     )
 
     return render_template('manage_rating.html', ratings=ratings, my_rating=my_rating, service_id=service_id)
+
+
+@app.route('/streaming_services/<int:service_id>/delete', methods=['POST'])
+def delete_rating(service_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+
+    execute_query(
+        "DELETE FROM Rating WHERE u_id = %s AND streamingID = %s",
+        (user_id, service_id),
+        commit=True
+    )
+
+    return redirect(url_for('manage_rating', service_id=service_id))
+
 
 
 
