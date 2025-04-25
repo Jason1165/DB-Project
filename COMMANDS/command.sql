@@ -172,7 +172,7 @@ BEGIN
     (CURRENT_DATE, CURRENT_TIMESTAMP, "INSERT", NEW.score, NEW.u_id, NEW.streamingID);
 
     UPDATE streaming_service 
-    SET rating = (rating + NEW.score/5)/(numRatings + 1),
+    SET rating = (rating*numRatings + NEW.score/5)/(numRatings + 1),
     numRatings = numRatings + 1
     WHERE streamingID = NEW.streamingID;
 END$$
@@ -188,7 +188,7 @@ BEGIN
   (CURRENT_DATE, CURRENT_TIMESTAMP, "UPDATE", NEW.score, NEW.u_id, NEW.streamingID);
 
   UPDATE streaming_service
-  SET rating = ((rating * numRatings) - OLD.score + NEW.score/5)/numRatings
+  SET rating = ((rating * numRatings) - OLD.score/5 + NEW.score/5)/numRatings
   WHERE streamingID = NEW.streamingID;
 END$$
 DELIMITER ;
@@ -205,7 +205,7 @@ BEGIN
   UPDATE streaming_service
   SET rating = CASE 
     WHEN (numRatings - 1) = 0 THEN 0
-    ELSE ((rating * numRatings) - OLD.score) / (numRatings - 1)
+    ELSE ((rating * numRatings) - OLD.score/5) / (numRatings - 1)
   END,
   numRatings = numRatings - 1
   WHERE streamingID = OLD.streamingID;
