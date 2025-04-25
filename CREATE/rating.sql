@@ -1,5 +1,5 @@
 CREATE TABLE rating (
-    score FLOAT,
+    score INT,
     u_id INT,
     streamingID INT,
     FOREIGN KEY(u_id) REFERENCES user(u_id),
