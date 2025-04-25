@@ -175,14 +175,14 @@ def view_bracket(bracket_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    # Step 1: Organize the bracket (assign rounds)
+    # Assign round numbers in case they weren't assigned already
     execute_query(
         "CALL OrganizeBracketMatches(%s)",
         (bracket_id,),
         commit=True
     )
 
-    # Step 2: Fetch matches organized by round
+    # Get matches organized by round
     matches = execute_query(
         """
         SELECT m.matchID, t1.name AS homeTeam, t2.name AS visitingTeam,
@@ -197,7 +197,7 @@ def view_bracket(bracket_id):
         fetchall=True
     )
 
-    # Step 3: Group matches by round
+    # Group matches by round numbers
     bracket = {}
     for match in matches:
         rnd = match['round']
