@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ratings</title>
+</head>
+<body>
+    <h2>Ratings</h2>
+
+    <form method="post">
+    <label>Rating:</label>
+    <input type="number" name="rating" min="1" max="5" value="{{ my_rating.rating if my_rating else '' }}" required>
+    <input type="submit" value="{{ 'Update' if my_rating else 'Submit' }} Rating">
+    </form>
+
+    <h3>All Ratings</h3>
+    <ul>
+    {% for r in ratings %}
+        <li><strong>{{ r.username }}:</strong> {{ r.score }}</li>
+    {% endfor %}
+    </ul>
+</body>

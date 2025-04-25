@@ -14,5 +14,10 @@
 
     <input type="submit" value="Sign Up"><br>
   </form>
+
+  {% if error %}
+    <p style="color: red;">{{ error }}</p>
+  {% endif %}
+
 </body>
 </html>

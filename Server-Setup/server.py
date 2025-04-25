@@ -46,6 +46,10 @@ def signup():
         username = request.form.get('username')
         password = request.form.get('password')
 
+        if len(username) < 1 or len(password) < 1:
+            error = "Username or password should be longer than one character."
+            return render_template("register.html", error=error)
+
         existing_user = execute_query (
             "SELECT * FROM user WHERE username = %s",
             (username,),
@@ -53,7 +57,8 @@ def signup():
         )
 
         if existing_user:
-            return "Username already taken. Try another one.", 409
+            error = "Username already taken. Try another one."
+            return render_template("register.html", error=error)
 
         hashed_password = generate_password_hash(password)
         execute_query(
@@ -82,7 +87,8 @@ def login():
             session['username'] = user['username']
             return redirect(url_for('search'))
         else:
-            return "Invalid username or password.", 401
+            error = "Invalid username or password."
+            return render_template('login.html', error=error)    
     return render_template('login.html')
 
 
@@ -119,8 +125,58 @@ def search():
                 (f"%{search_value}%",),
                 fetchall=True
             )
-
     return render_template('search.html', player_data=player_data)
+
+
+@app.route('/streaming_services')
+def streaming_services():
+    services = execute_query("SELECT * FROM Streaming_Service", fetchall=True)
+    return render_template('streaming_services.html', services=services)
+
+@app.route('/streaming_service/<int:service_id>', methods=['GET', 'POST'])
+def manage_rating(service_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+
+    if request.method == 'POST':
+        score = request.form.get('rating')
+        comment = request.form.get('comment')
+
+        existing = execute_query(
+            "SELECT * FROM Rating WHERE u_id = %s AND streamingID = %s",
+            (user_id, service_id),
+            fetchone=True
+        )
+
+        if existing:
+            execute_query(
+                "UPDATE Rating SET score = %s WHERE u_id = %s AND streamingID = %s",
+                (score, user_id, service_id),
+                commit=True
+            )
+        else:
+            execute_query(
+                "INSERT INTO Rating (score, u_id, streamingID) VALUES (%s, %s, %s)",
+                (score, user_id, service_id),
+                commit=True
+            )
+
+    ratings = execute_query(
+        "SELECT r.score, u.username FROM Rating r JOIN User u ON r.u_id = u.u_id WHERE streamingID = %s",
+        (service_id,),
+        fetchall=True
+    )
+
+    my_rating = execute_query(
+        "SELECT * FROM Rating WHERE u_id = %s AND streamingID = %s",
+        (user_id, service_id),
+        fetchone=True
+    )
+
+    return render_template('manage_rating.html', ratings=ratings, my_rating=my_rating, service_id=service_id)
+
 
 
 if __name__ == '__main__':

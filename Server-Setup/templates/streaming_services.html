@@ -1,0 +1,23 @@
+<h2>All Streaming Services</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Number of Reviews</th>
+      <th>Rating</th>
+      <th>Leave a Review</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for service in services %}
+      <tr>
+        <td>{{ service.name }}</td>
+        <td>{{ service.numRatings }}</td>
+        <td>{{ service.rating }}</td>
+        <td>
+          <a href="{{ url_for('manage_rating', service_id=service.streamingID) }}">Manage My Rating</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
