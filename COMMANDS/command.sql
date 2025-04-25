@@ -82,13 +82,12 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
 BEGIN
   SELECT 
-    m.matchID, m.score, m.Ticket_Cost, m.Date, 
+    m.score, m.Ticket_Cost, m.Date, 
     t1.Name AS HomeTeamName, 
     t2.Name AS VisitingTeamName, 
     s.Name AS StadiumName, 
     r.Name AS RefereeName, 
-    ss.Name AS StreamingService,
-    m.BracketID
+    ss.Name AS StreamingService
   FROM `match` m
   INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
   INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
@@ -96,6 +95,26 @@ BEGIN
   INNER JOIN Referee r ON m.refereeID = r.refereeID
   INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
   WHERE m.Date = match_date;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
+BEGIN
+  SELECT 
+    m.score, m.Ticket_Cost, m.Date, 
+    t1.Name AS HomeTeamName, 
+    t2.Name AS VisitingTeamName, 
+    s.Name AS StadiumName, 
+    r.Name AS RefereeName, 
+    ss.Name AS StreamingService
+  FROM `match` m
+  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN Referee r ON m.refereeID = r.refereeID
+  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
+  WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
 END$$
 DELIMITER ;
 

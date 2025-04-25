@@ -114,7 +114,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/playerSearch', methods=['GET', 'POST'])
 def search():
     if 'user_id' not in session:
         return redirect(url_for('login'))
@@ -142,6 +142,33 @@ def search():
                 fetchall=True
             )
     return render_template('playerSearch.html', player_data=player_data)
+
+@app.route('/matchSearch', methods=['GET', 'POST'])
+def match_search():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    match_data = None
+
+    if request.method == 'POST':
+        mode = request.form.get('search_mode')
+
+        if mode == 'team':
+            search_value = request.form.get('team_query')
+            match_data = execute_query(
+                "CALL GetMatchInfoByTeam(%s)",
+                (f"%{search_value}%",),
+                fetchall=True
+            )
+        elif mode == 'date':
+            search_value = request.form.get('date_query')
+            match_data = execute_query(
+                "CALL GetMatchInfoByDate(%s)",
+                (search_value,),
+                fetchall=True
+            )
+
+    return render_template('matchSearch.html', match_data=match_data)
 
 
 @app.route('/streaming_services')

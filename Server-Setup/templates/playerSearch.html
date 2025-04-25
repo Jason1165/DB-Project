@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Player Search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}">
+</head>
+<body>
+  <div style="text-align: right;">
+    <a href="/logout">Logout</a>
+  </div>
+
+  <h1>Player Search</h1>
+
+  <form method="post" class="search-form">
+    <label for="search_field">Search by:</label>
+  
+    <select name="search_field" id="search_field" onchange="toggleInputField()">
+      <option value="name">Player</option>
+      <option value="team">Team</option>
+      <option value="position">Position</option>
+    </select>
+  
+    <div id="input-containers">
+      <div id="text-input-container">
+        <input type="text" name="player_name" placeholder="Enter search value" required>
+      </div>
+  
+      <div id="position-select-container">
+        <select name="player_name">
+          <option value="PG">Point Guard</option>
+          <option value="PF">Power Forward</option>
+          <option value="C">Center</option>
+          <option value="SG">Shooting Guard</option>
+          <option value="SF">Small Forward</option>
+        </select>
+      </div>
+    </div>
+  
+    <input type="submit" value="Search">
+  </form>
+  
+  <script>
+    function toggleInputField() {
+      const searchField = document.getElementById("search_field").value;
+      const textInput = document.querySelector("#text-input-container input");
+      const positionSelect = document.querySelector("#position-select-container select");
+  
+      if (searchField === "position") {
+        document.getElementById("text-input-container").style.display = "none";
+        document.getElementById("position-select-container").style.display = "block";
+  
+        textInput.disabled = true;
+        positionSelect.disabled = false;
+      } else {
+        document.getElementById("text-input-container").style.display = "block";
+        document.getElementById("position-select-container").style.display = "none";
+  
+        textInput.disabled = false;
+        positionSelect.disabled = true;
+      }
+    }
+  
+    window.onload = toggleInputField;
+  </script>
+  
+    
+  {% if player_data %}
+    <h2>Search Results:</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          {% for key in player_data[0].keys() %}
+            <th>{{ key }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in player_data %}
+          <tr>
+            {% for value in player.values() %}
+              <td>{{ value }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif player_data is not none %}
+    <p>No players found.</p>
+  {% endif %}
+</body>
+</html>

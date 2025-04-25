@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Match Search</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='search.css') }}">
+</head>
+<body>
+  <div style="text-align: right;">
+    <a href="/logout">Logout</a>
+  </div>
+
+  <h1>Match Search</h1>
+
+  <form method="post" class="search-form">
+    <label for="search_mode">Search by:</label>
+    <select name="search_mode" id="search_mode" onchange="toggleInputField()">
+      <option value="team">Team</option>
+      <option value="date">Date</option>
+    </select>
+
+    <div id="team-input-container">
+      <input type="text" name="team_query" placeholder="Enter team name" required>
+    </div>
+
+    <div id="date-input-container" style="display: none;">
+      <input type="date" name="date_query">
+    </div>
+
+    <input type="submit" value="Search">
+  </form>
+
+  <script>
+    function toggleInputField() {
+      const searchMode = document.getElementById("search_mode").value;
+      const teamInput = document.querySelector("input[name='team_query']");
+      const dateInput = document.querySelector("input[name='date_query']");
+
+      if (searchMode === "date") {
+        document.getElementById("team-input-container").style.display = "none";
+        document.getElementById("date-input-container").style.display = "block";
+        teamInput.disabled = true;
+        dateInput.disabled = false;
+      } else {
+        document.getElementById("team-input-container").style.display = "block";
+        document.getElementById("date-input-container").style.display = "none";
+        teamInput.disabled = false;
+        dateInput.disabled = true;
+      }
+    }
+
+    window.onload = toggleInputField;
+  </script>
+
+  {% if match_data %}
+    <h2>Search Results:</h2>
+    <table border="1">
+      <thead>
+        <tr>
+          {% for key in match_data[0].keys() %}
+            <th>{{ key }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for match in match_data %}
+          <tr>
+            {% for value in match.values() %}
+              <td>{{ value }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elif match_data is not none %}
+    <p>No matches found.</p>
+  {% endif %}
+</body>
+</html>
