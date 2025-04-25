@@ -170,6 +170,42 @@ def match_search():
 
     return render_template('matchSearch.html', match_data=match_data)
 
+@app.route('/bracket/<int:bracket_id>')
+def view_bracket(bracket_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    # Step 1: Organize the bracket (assign rounds)
+    execute_query(
+        "CALL OrganizeBracketMatches(%s)",
+        (bracket_id,),
+        commit=True
+    )
+
+    # Step 2: Fetch matches organized by round
+    matches = execute_query(
+        """
+        SELECT m.matchID, t1.name AS homeTeam, t2.name AS visitingTeam,
+               m.homeScore, m.visitingScore, m.round
+        FROM `match` m
+        LEFT JOIN team t1 ON m.homeTeamID = t1.teamID
+        LEFT JOIN team t2 ON m.visitingTeamID = t2.teamID
+        WHERE m.bracketID = %s
+        ORDER BY m.round ASC, m.matchID ASC
+        """,
+        (bracket_id,),
+        fetchall=True
+    )
+
+    # Step 3: Group matches by round
+    bracket = {}
+    for match in matches:
+        rnd = match['round']
+        if rnd not in bracket:
+            bracket[rnd] = []
+        bracket[rnd].append(match)
+
+    return render_template('bracket.html', bracket=bracket, bracket_id=bracket_id)
 
 @app.route('/streaming_services')
 def streaming_services():

@@ -118,6 +118,60 @@ BEGIN
 END$$
 DELIMITER ;
 
+-- Requirement: Matches must be in round order
+DELIMITER $$
+DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
+CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
+BEGIN
+    DECLARE matchCount INT;
+    DECLARE totalRounds INT;
+    DECLARE roundSize INT;
+    DECLARE roundNumber INT DEFAULT 1;
+    DECLARE matchIndex INT DEFAULT 0;
+    DECLARE offset INT DEFAULT 0;
+
+    -- Count number of matches and rounds
+    SELECT COUNT(*) INTO matchCount
+    FROM `match`
+    WHERE bracketID = in_bracketID;
+    SET totalRounds = LOG2(matchCount + 1);
+
+    -- Create temporary table to track the match order in case matchID isn't completely numerically ordered
+    DROP TEMPORARY TABLE IF EXISTS temp_matches;
+    CREATE TEMPORARY TABLE temp_matches (
+        idx INT AUTO_INCREMENT PRIMARY KEY,
+        matchID INT
+    );
+
+    -- This is why the matches need to be in order
+    INSERT INTO temp_matches (matchID)
+    SELECT matchID
+    FROM `match`
+    WHERE bracketID = in_bracketID
+    ORDER BY matchID;
+
+    -- Assigning rounds to matches
+    SET roundNumber = 1;
+    SET offset = 0;
+
+    WHILE roundNumber <= totalRounds DO
+        SET roundSize = POWER(2, totalRounds - roundNumber);
+        SET matchIndex = 0;
+
+        WHILE matchIndex < roundSize DO
+            UPDATE `match` AS m
+            JOIN temp_matches tm ON m.matchID = tm.matchID
+            SET m.round = roundNumber
+            WHERE tm.idx = offset + matchIndex + 1;
+            SET matchIndex = matchIndex + 1;
+        END WHILE;
+
+        SET offset = offset + roundSize;
+        SET roundNumber = roundNumber + 1;
+    END WHILE;
+END$$
+DELIMITER ;
+
 -- FUNCTIONS
 DELIMITER $$
 CREATE FUNCTION CountPlayersByTeam(team_name VARCHAR(100))

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bracket View - Bracket {{ bracket_id }}</title>
+  <style>
+    .round { margin-bottom: 40px; }
+    .match { margin: 5px 0; }
+    h2 { border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <div style="text-align: right;">
+    <a href="/logout">Logout</a>
+  </div>
+
+  <h1>Bracket {{ bracket_id }}</h1>
+
+  {% for round_num, matches in bracket.items() %}
+    <div class="round">
+      <h2>Round {{ round_num }}</h2>
+      {% for match in matches %}
+        <div class="match">
+          {{ match.homeTeam or "TBD" }} 
+          {% if match.homeScore is not none and match.visitingScore is not none %}
+            ({{ match.homeScore }})
+          {% endif %}
+          vs 
+          {{ match.visitingTeam or "TBD" }} 
+          {% if match.homeScore is not none and match.visitingScore is not none %}
+            ({{ match.visitingScore }})
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</body>
+</html>
