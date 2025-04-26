@@ -2,19 +2,15 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
     gcc \
-    && apt-get clean
+    default-libmysqlclient-dev \
+    pkg-config
 
-COPY . /app
+COPY . .
 
-WORKDIR /app/Server-Setup
+RUN cd Server-Setup && python3 -m venv venv
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+RUN cd Server-Setup && . venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
 
-EXPOSE 8792
-
-CMD ["gunicorn", "server:app"]
+CMD ["bash", "-c", "cd Server-Setup && . venv/bin/activate && gunicorn server:app"]
