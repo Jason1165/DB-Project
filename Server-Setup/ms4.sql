@@ -124,7 +124,6 @@ CREATE TABLE `match` (
     streamingID INT,
     refereeID INT,
     bracketID INT,
-    -- score VARCHAR(15),
     homeScore INT,
     visitingScore INT,
     ticket_cost FLOAT,
@@ -136,7 +135,7 @@ CREATE TABLE `match` (
     FOREIGN KEY(stadiumID) REFERENCES stadium(stadiumID),
     FOREIGN KEY(refereeID) REFERENCES referee(refereeID),
     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
-    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID),
+    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID)
 );
 
 
@@ -759,20 +758,22 @@ DELIMITER ;
 -- -------------------------
 
 -- Admin privileges
-CREATE ROLE 'Sadmin';
-GRANT ALL PRIVILEGES ON db4.* TO 'Sadmin';
+DROP USER 'Sadmin'@'%';
+CREATE USER 'Sadmin';
+GRANT ALL PRIVILEGES ON railway.* TO 'Sadmin';
 
 -- User privileges
-CREATE ROLE 'Suser';
+DROP USER 'Suser'@'%';
+CREATE USER 'Suser';
 
-GRANT SELECT ON db4.player TO 'Suser';
-GRANT SELECT ON db4.team TO 'Suser';
-GRANT SELECT ON db4.match TO 'Suser';
-GRANT SELECT ON db4.streaming_service TO 'Suser';
-GRANT SELECT ON db4.bracket TO 'Suser';
-GRANT SELECT ON db4.conference TO 'Suser';
-GRANT SELECT ON db4.rating TO 'Suser';
+GRANT SELECT ON railway.player TO 'Suser';
+GRANT SELECT ON railway.team TO 'Suser';
+GRANT SELECT ON railway.match TO 'Suser';
+GRANT SELECT ON railway.streaming_service TO 'Suser';
+GRANT SELECT ON railway.bracket TO 'Suser';
+GRANT SELECT ON railway.conference TO 'Suser';
+GRANT SELECT ON railway.rating TO 'Suser';
 
-GRANT INSERT, UPDATE, DELETE ON db4.rating TO 'Suser';
+GRANT INSERT, UPDATE, DELETE ON railway.rating TO 'Suser';
 -- -------------------------
 

@@ -7,7 +7,6 @@ CREATE TABLE `match` (
     streamingID INT,
     refereeID INT,
     bracketID INT,
-    -- score VARCHAR(15),
     homeScore INT,
     visitingScore INT,
     ticket_cost FLOAT,
@@ -19,5 +18,5 @@ CREATE TABLE `match` (
     FOREIGN KEY(stadiumID) REFERENCES stadium(stadiumID),
     FOREIGN KEY(refereeID) REFERENCES referee(refereeID),
     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
-    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID),
+    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID)
 );
