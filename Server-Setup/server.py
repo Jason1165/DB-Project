@@ -13,7 +13,7 @@ app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config["MYSQL_USER"] = 'root'
 app.config["MYSQL_PASSWORD"] = ''
 app.config["MYSQL_DB"] = 'db4'
-app.config['MYSQL_PORT'] = 3306
+app.config['MYSQL_PORT'] = 3306 # 3303 for mofei
 
 mysql = MySQL(app)
 app.secret_key = "SOMESECRETKEY"
@@ -34,8 +34,8 @@ def execute_query(query, params = None, fetchone = False, fetchall = False, comm
 
 @app.route("/")
 def index():
-    if 'user' in session:
-        return render_template('playerSearch.html')
+    if 'user_id' in session:
+        return render_template('home.html')
     else:
         return redirect(url_for('login'))
 
@@ -101,7 +101,7 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user_id'] = user['u_id']
             session['username'] = user['username']
-            return redirect(url_for('search'))
+            return redirect(url_for('index'))
         else:
             error = "Invalid username or password."
             return render_template('login.html', error=error)    
@@ -112,6 +112,67 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+@app.route('/players', methods=['GET', 'POST'])
+def players():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        search_value = request.form.get('player_name')
+        search_field = request.form.get('search_field')
+
+        procedures = {
+            'name': 'GetPlayerByName',
+            'team': 'GetPlayerByTeam',
+            'position': 'GetPlayerByPosition',
+        }
+
+        procedure_name = procedures.get(search_field)
+
+        if procedure_name:
+            players_data = execute_query(
+                f"CALL {procedure_name}(%s)",
+                (f"%{search_value}%",),
+                fetchall=True
+            )
+    else:
+        # Get all players with team names
+        players_data = execute_query(
+            """
+            SELECT p.playerID, p.name AS Name, p.position AS Position, p.number AS Number,
+                p.height AS Height, p.age AS Age, p.salary AS Salary,
+                t.name AS TeamName
+            FROM player p
+            LEFT JOIN team t ON p.teamID = t.teamID
+            ORDER BY p.playerID
+            """,
+            fetchall=True
+        )
+
+    return render_template('players.html', players_data=players_data)
+
+@app.route('/player/<int:player_id>')
+def player_detail(player_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    # Get player details
+    player = execute_query(
+        """
+        SELECT p.*, t.name AS team_name
+        FROM player p
+        LEFT JOIN team t ON p.teamID = t.teamID
+        WHERE p.playerID = %s
+        """,
+        (player_id,),
+        fetchone=True
+    )
+
+    if not player:
+        return "Player not found", 404
+
+    return render_template('player_detail.html', player=player)
 
 
 @app.route('/playerSearch', methods=['GET', 'POST'])
@@ -171,47 +232,65 @@ def match_search():
     return render_template('matchSearch.html', match_data=match_data)
 
 @app.route('/bracket/<int:bracket_id>')
-def view_bracket(bracket_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    # Assign round numbers in case they weren't assigned already
-    execute_query(
-        "CALL OrganizeBracketMatches(%s)",
-        (bracket_id,),
-        commit=True
-    )
-
-    # Get matches organized by round
-    matches = execute_query(
-        """
-        SELECT m.matchID, t1.name AS homeTeam, t2.name AS visitingTeam,
-               m.homeScore, m.visitingScore, m.round
-        FROM `match` m
-        LEFT JOIN team t1 ON m.homeTeamID = t1.teamID
-        LEFT JOIN team t2 ON m.visitingTeamID = t2.teamID
-        WHERE m.bracketID = %s
-        ORDER BY m.round ASC, m.matchID ASC
-        """,
-        (bracket_id,),
-        fetchall=True
-    )
-
-    # Group matches by round numbers
-    bracket = {}
-    for match in matches:
-        rnd = match['round']
-        if rnd not in bracket:
-            bracket[rnd] = []
-        bracket[rnd].append(match)
-
-    return render_template('bracket.html', bracket=bracket, bracket_id=bracket_id)
+ def view_bracket(bracket_id):
+     if 'user_id' not in session:
+         return redirect(url_for('login'))
+ 
+     # Assign round numbers in case they weren't assigned already
+     execute_query(
+         "CALL OrganizeBracketMatches(%s)",
+         (bracket_id,),
+         commit=True
+     )
+ 
+     # Get matches organized by round
+     matches = execute_query(
+         """
+         SELECT m.matchID, t1.name AS homeTeam, t2.name AS visitingTeam,
+                m.homeScore, m.visitingScore, m.round
+         FROM `match` m
+         LEFT JOIN team t1 ON m.homeTeamID = t1.teamID
+         LEFT JOIN team t2 ON m.visitingTeamID = t2.teamID
+         WHERE m.bracketID = %s
+         ORDER BY m.round ASC, m.matchID ASC
+         """,
+         (bracket_id,),
+         fetchall=True
+     )
+ 
+     # Group matches by round numbers
+     bracket = {}
+     for match in matches:
+         rnd = match['round']
+         if rnd not in bracket:
+             bracket[rnd] = []
+         bracket[rnd].append(match)
+ 
+     return render_template('bracket.html', bracket=bracket, bracket_id=bracket_id)
 
 @app.route('/streaming_services')
 def streaming_services():
     services = execute_query("SELECT * FROM Streaming_Service", fetchall=True)
     return render_template('streaming_services.html', services=services)
 
+@app.route('/teams', methods=['GET'])
+def teams():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    # Get all teams from the database with conferenceID included
+    teams_data = execute_query(
+        """
+        SELECT t.teamID, t.name, t.Championships_Won as championships_won, t.playoffs_won, t.earnings,
+               t.conferenceID, c.side AS conference_side
+        FROM team t
+        LEFT JOIN conference c ON t.conferenceID = c.conferenceID
+        ORDER BY t.conferenceID, t.name
+        """,
+        fetchall=True
+    )
+
+    return render_template('teams.html', teams_data=teams_data)
 
 @app.route('/streaming_services/<int:service_id>', methods=['GET', 'POST'])
 def manage_rating(service_id):

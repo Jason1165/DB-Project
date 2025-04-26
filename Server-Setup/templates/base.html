@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Query Crusaders{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="header">
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/players">Players</a></li>
+            <li><a href="/teams">Teams</a></li>
+            <li><a href="/matches">Matches</a></li>
+            <li><a href="/stats">Stats</a></li>
+            <li class="logout"><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

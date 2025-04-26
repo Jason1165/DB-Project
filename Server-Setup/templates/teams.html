@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Teams{% endblock %}
+
+{% block content %}
+<div class="banner">
+    <h1>Teams</h1>
+</div>
+
+<div class="conferences-container">
+    <!-- Western Conference (conferenceID = 2) -->
+    <div class="conference-column">
+        <div class="conference-card">
+            <h2 class="conference-title">West Conference</h2>
+
+            {% set west_exists = false %}
+            {% for team in teams_data %}
+                {% if team.conferenceID == 2 %}
+                    {% set west_exists = true %}
+                    <div class="team-card">
+                        <p class="team-info">
+                            <!-- {{ team.name }} - Western Conference<br>
+                                 Championships: {{ team.championships_won }} | Playoff Wins: {{ team.playoffs_won }} | Earnings: ${{ team.earnings }}M -->
+                            {{ team.name }}
+                        </p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Eastern Conference (conferenceID = 1) -->
+    <div class="conference-column">
+        <div class="conference-card">
+            <h2 class="conference-title">East Conference</h2>
+
+            {% set east_exists = false %}
+            {% for team in teams_data %}
+                {% if team.conferenceID == 1 %}
+                    {% set east_exists = true %}
+                    <div class="team-card">
+                        <p class="team-info">
+                            {{ team.name }}
+                        </p>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
