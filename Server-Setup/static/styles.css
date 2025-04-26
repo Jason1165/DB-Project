@@ -45,6 +45,7 @@ a:link, a:visited {
 
 .content {
     text-align: center;
+    margin-bottom: 4rem;
 }
 
 .content-container {
@@ -112,6 +113,7 @@ a:link, a:visited {
     max-width: 1000px;
     margin: 0 auto;
     padding-bottom: 30px;
+    padding-top: 4rem;
 }
 
 .player-detail-card {
@@ -167,6 +169,7 @@ a:link, a:visited {
     border-radius: 5px;
     text-decoration: none;
     font-weight: bold;
+    margin-top: 2rem;
 }
 
 .error {
@@ -236,7 +239,7 @@ input[type="submit"]:hover {
 }
 
 .conference-card {
-    background-color: #e0e0e0;
+    background: #d2d7d9;
     border-radius: 15px;
     padding: 20px;
     height: 100%;
@@ -253,7 +256,7 @@ input[type="submit"]:hover {
 
 /* Team Card */
 .team-card {
-    background-color: #e0e0e0;
+    background: #d2d7d9;
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 15px;

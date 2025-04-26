@@ -235,7 +235,6 @@ def match_search():
 def view_bracket(bracket_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
- 
      # Assign round numbers in case they weren't assigned already
     execute_query(
         "CALL OrganizeBracketMatches(%s)",
