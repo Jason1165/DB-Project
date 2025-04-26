@@ -1,6 +1,6 @@
+DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `ratingauditlog`;
 DROP TABLE IF EXISTS `rating`;
-DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `match`;
 DROP TABLE IF EXISTS `playoff`;
 DROP TABLE IF EXISTS `donation`;
