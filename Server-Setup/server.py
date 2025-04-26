@@ -152,6 +152,38 @@ def players():
 
     return render_template('players.html', players_data=players_data)
 
+@app.route('/bracket', methods=['GET', 'POST'])
+def search_bracket():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    error = None
+    brackets = []
+
+    if request.method == 'POST':
+        search_type = request.form.get('search_type')
+        search_value = request.form.get('search_value')
+
+        if search_type == 'team':
+            query = "CALL GetBracketByTeam(%s)"
+        elif search_type == 'season':
+            query = "CALL GetBracketBySeason(%s)"
+        else:
+            error = "Invalid search type selected."
+            return render_template('bracket.html', error=error)
+
+        brackets = execute_query(
+            query,
+            (search_value,),
+            fetchall=True  # ✅ Fetch all results, not just one
+        )
+
+        if not brackets:
+            error = "No brackets found for your search."
+
+    return render_template('bracket.html', error=error, brackets=brackets)
+
+
 @app.route('/player/<int:player_id>')
 def player_detail(player_id):
     if 'user_id' not in session:
@@ -235,7 +267,8 @@ def match_search():
 def view_bracket(bracket_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
-     # Assign round numbers in case they weren't assigned already
+    
+    # Assign round numbers
     execute_query(
         "CALL OrganizeBracketMatches(%s)",
         (bracket_id,),
@@ -265,7 +298,7 @@ def view_bracket(bracket_id):
             bracket[rnd] = []
         bracket[rnd].append(match)
 
-    return render_template('bracket.html', bracket=bracket, bracket_id=bracket_id)
+    return render_template('bracketNum.html', bracket=bracket, bracket_id=bracket_id)
 
 @app.route('/streaming_services')
 def streaming_services():
