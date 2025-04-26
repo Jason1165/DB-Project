@@ -8,5 +8,15 @@ INSERT INTO team VALUES
 (7, 7, 7, 10, 2, 'Sacramento Kings', 0, 1, 300),
 (8, 8, 8, 2, 1, 'Miami Heat', 3, 9, 380),
 (9, 9, 9, 6, 1, 'Detroit Pistons', 3, 5, 290),
-(10, 10, 10, 7, 1, 'New York Knicks', 2, 8, 425);
+(10, 10, 10, 7, 1, 'New York Knicks', 2, 8, 425),
 
+(11, 1, 2, 3, 1, 'Boston Celtics', 17, 22, 525),
+(12, 2, 3, 4, 1, 'Philadelphia 76ers', 3, 9, 430),
+(13, 3, 4, 5, 1, 'Milwaukee Bucks', 2, 7, 415),
+(14, 4, 5, 6, 1, 'Chicago Bulls', 6, 11, 450),
+(15, 5, 6, 7, 1, 'Cleveland Cavaliers', 1, 5, 400),
+(16, 6, 7, 8, 2, 'Phoenix Suns', 0, 4, 385),
+(17, 7, 8, 9, 2, 'Dallas Mavericks', 1, 6, 395),
+(18, 8, 9, 10, 2, 'Los Angeles Lakers', 17, 32, 550),
+(19, 9, 10, 1, 2, 'LA Clippers', 0, 8, 375),
+(20, 10, 1, 2, 2, 'Oklahoma City Thunder', 0, 5, 360);
