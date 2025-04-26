@@ -3,20 +3,40 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import pandas as pd
 from werkzeug.security import check_password_hash, generate_password_hash
+import os
 
 app = Flask(__name__)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config["MYSQL_USER"] = 'root'
-app.config["MYSQL_PASSWORD"] = ''
-app.config["MYSQL_DB"] = 'db4'
-app.config['MYSQL_PORT'] = 3306 # 3303 for mofei
+app.config['MYSQL_HOST'] = os.environ.get('MYSQLHOST', '127.0.0.1')
+app.config['MYSQL_PORT'] = int(os.environ.get('MYSQLPORT', 3306))
+app.config['MYSQL_USER'] = os.environ.get('MYSQLUSER', 'root')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQLPASSWORD', '')
+app.config['MYSQL_DB'] = os.environ.get('MYSQLDATABASE', 'db4')
+
 
 mysql = MySQL(app)
 app.secret_key = "SOMESECRETKEY"
+
+@app.route('/initdb/<secret>')
+def initdb(secret):
+    if secret != os.environ.get('INITDB_SECRET'):
+        return "Unauthorized", 403
+    try:
+        cursor = mysql.connection.cursor()
+        with open('ms4.sql', 'r') as f:
+            sql = f.read()
+        for statement in sql.split(';'):
+            if statement.strip():
+                cursor.execute(statement)
+        mysql.connection.commit()
+        cursor.close()
+        return "Database successfully initialized!"
+    except Exception as e:
+        return f"Error: {str(e)}"
+
 
 def execute_query(query, params = None, fetchone = False, fetchall = False, commit = False):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)

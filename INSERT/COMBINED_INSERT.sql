@@ -56,6 +56,7 @@ INSERT INTO conference VALUES
 (12, 'West Coast Conference'),
 (13, 'Conference USA');
 
+
 INSERT INTO streaming_service VALUES
 (1, 'DIRECTV Stream', 79.99, 0, 0, 'https://www.directv.com/sports/nba-basketball/'),
 (2, 'Hulu', 7.99, 0, 0, 'https://www.hulu.com/nba'),
@@ -69,16 +70,16 @@ INSERT INTO streaming_service VALUES
 (10, 'Amazon Prime', 14.99, 0, 0, 'https://www.amazon.com/b?ie=UTF8&node=17933054011');
 
 INSERT INTO bracket VALUES
-(1, 8, 'Play-In 2020'),
-(2, 16, 'Play-Offs 2020'),
-(3, 8, 'Play-In 2021'),
-(4, 16, 'Play-Offs 2021'),
-(5, 8, 'Play-In 2022'),
-(6, 16, 'Play-Offs 2022'),
-(7, 8, 'Play-In 2023'),
-(8, 16, 'Play-Offs 2023'),
-(9, 8, 'Play-In 2024'),
-(10, 16, 'Play-Offs 2024');
+(1, 8, 'Play-Offs 2022'),
+(2, 16, 'Play-Offs 2024'),
+(3, 8, 'Play-Offs 2023'),
+(4, 8, 'Play-In 2024'),
+(5, 8, 'Play-Offs 2023'),
+(6, 16, 'Play-In 2023'),
+(7, 16, 'Play-In 2020'),
+(8, 16, 'Play-In 2024'),
+(9, 16, 'Play-Offs 2021'),
+(10, 16, 'Play-In 2020');
 
 INSERT INTO team VALUES
 (1, 1, 1, 3, 2, 'Denver Nuggets', 1, 3, 350),
@@ -102,8 +103,6 @@ INSERT INTO team VALUES
 (18, 8, 9, 10, 2, 'Los Angeles Lakers', 17, 32, 550),
 (19, 9, 10, 1, 2, 'LA Clippers', 0, 8, 375),
 (20, 10, 1, 2, 2, 'Oklahoma City Thunder', 0, 5, 360);
-
-
 
 INSERT INTO referee VALUES
 (1, 4, 'Scott Foster', 57, '1994-09-30', NULL),
@@ -306,5 +305,4 @@ VALUES
 (116, 15, 4, 4, 2, 5, 10, 120, 106, 87.45, '2020-05-09'),
 (117, 20, 17, 6, 2, 5, 10, 109, 112, 91.95, '2020-05-09'),
 (118, 15, 20, 4, 4, 2, 10, 122, 115, 93.50, '2020-05-13');
-
 

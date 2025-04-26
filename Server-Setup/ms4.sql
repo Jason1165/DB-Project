@@ -38,6 +38,7 @@ CREATE TABLE streaming_service (
     price DECIMAL(5,2),
     rating FLOAT,
     numRatings INT,
+    streamingLink VARCHAR(255),
     PRIMARY KEY (streamingID)
 );
 
@@ -123,16 +124,19 @@ CREATE TABLE `match` (
     streamingID INT,
     refereeID INT,
     bracketID INT,
-    score VARCHAR(15),
+    -- score VARCHAR(15),
+    homeScore INT,
+    visitingScore INT,
     ticket_cost FLOAT,
     date DATE,
+    `round` INT DEFAULT NULL,
     PRIMARY KEY(matchID),
     FOREIGN KEY(homeTeamID) REFERENCES team(teamID),
     FOREIGN KEY(visitingTeamID) REFERENCES team(teamID),
     FOREIGN KEY(stadiumID) REFERENCES stadium(stadiumID),
     FOREIGN KEY(refereeID) REFERENCES referee(refereeID),
     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
-    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID)
+    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID),
 );
 
 
@@ -145,7 +149,7 @@ CREATE TABLE user (
 
 
 CREATE TABLE rating (
-    score FLOAT,
+    score INT,
     u_id INT,
     streamingID INT,
     FOREIGN KEY(u_id) REFERENCES user(u_id),
@@ -229,28 +233,28 @@ INSERT INTO conference VALUES
 
 
 INSERT INTO streaming_service VALUES
-(1, 'DIRECTV Stream', 79.99, 0, 0),
-(2, 'Hulu', 7.99, 0, 0),
-(3, 'NBA TV', 6.99, 0, 0),
-(4, 'Sling TV', 61.00, 0, 0),
-(5, 'YouTube TV', 82.99, 0, 0),
-(6, 'ESPN+', 10.99, 0, 0),
-(7, 'Fubo', 74.99, 0, 0),
-(8, 'NBA League Pass', 14.99, 0, 0),
-(9, 'Max', 16.99, 0, 0),
-(10, 'Amazon Prime', 14.99, 0, 0);
+(1, 'DIRECTV Stream', 79.99, 0, 0, 'https://www.directv.com/sports/nba-basketball/'),
+(2, 'Hulu', 7.99, 0, 0, 'https://www.hulu.com/nba'),
+(3, 'NBA TV', 6.99, 0, 0, 'https://www.nba.com/league-pass-purchase'),
+(4, 'Sling TV', 61.00, 0, 0, 'https://www.sling.com/sports/basketball'),
+(5, 'YouTube TV', 82.99, 0, 0, 'https://tv.youtube.com/welcome/?utm_servlet=prod&rd_rsn=asi&zipcode=11432'),
+(6, 'ESPN+', 10.99, 0, 0, 'https://www.espn.com/espnplus/'),
+(7, 'Fubo', 74.99, 0, 0, 'https://www.fubo.tv/stream/nba/'),
+(8, 'NBA League Pass', 14.99, 0, 0, 'https://www.tntdrama.com/nba-on-tnt'),
+(9, 'Max', 16.99, 0, 0, 'https://www.max.com/sports/nba'),
+(10, 'Amazon Prime', 14.99, 0, 0, 'https://www.amazon.com/b?ie=UTF8&node=17933054011');
 
 INSERT INTO bracket VALUES
-(1, 8, 'Play-In 2020'),
-(2, 16, 'Play-Offs 2020'),
-(3, 8, 'Play-In 2021'),
-(4, 16, 'Play-Offs 2021'),
-(5, 8, 'Play-In 2022'),
-(6, 16, 'Play-Offs 2022'),
-(7, 8, 'Play-In 2023'),
-(8, 16, 'Play-Offs 2023'),
-(9, 8, 'Play-In 2024'),
-(10, 16, 'Play-Offs 2024');
+(1, 8, 'Play-Offs 2022'),
+(2, 16, 'Play-Offs 2024'),
+(3, 8, 'Play-Offs 2023'),
+(4, 8, 'Play-In 2024'),
+(5, 8, 'Play-Offs 2023'),
+(6, 16, 'Play-In 2023'),
+(7, 16, 'Play-In 2020'),
+(8, 16, 'Play-In 2024'),
+(9, 16, 'Play-Offs 2021'),
+(10, 16, 'Play-In 2020');
 
 INSERT INTO team VALUES
 (1, 1, 1, 3, 2, 'Denver Nuggets', 1, 3, 350),
@@ -262,9 +266,18 @@ INSERT INTO team VALUES
 (7, 7, 7, 10, 2, 'Sacramento Kings', 0, 1, 300),
 (8, 8, 8, 2, 1, 'Miami Heat', 3, 9, 380),
 (9, 9, 9, 6, 1, 'Detroit Pistons', 3, 5, 290),
-(10, 10, 10, 7, 1, 'New York Knicks', 2, 8, 425);
+(10, 10, 10, 7, 1, 'New York Knicks', 2, 8, 425),
 
-
+(11, 1, 2, 3, 1, 'Boston Celtics', 17, 22, 525),
+(12, 2, 3, 4, 1, 'Philadelphia 76ers', 3, 9, 430),
+(13, 3, 4, 5, 1, 'Milwaukee Bucks', 2, 7, 415),
+(14, 4, 5, 6, 1, 'Chicago Bulls', 6, 11, 450),
+(15, 5, 6, 7, 1, 'Cleveland Cavaliers', 1, 5, 400),
+(16, 6, 7, 8, 2, 'Phoenix Suns', 0, 4, 385),
+(17, 7, 8, 9, 2, 'Dallas Mavericks', 1, 6, 395),
+(18, 8, 9, 10, 2, 'Los Angeles Lakers', 17, 32, 550),
+(19, 9, 10, 1, 2, 'LA Clippers', 0, 8, 375),
+(20, 10, 1, 2, 2, 'Oklahoma City Thunder', 0, 5, 360);
 
 INSERT INTO referee VALUES
 (1, 4, 'Scott Foster', 57, '1994-09-30', NULL),
@@ -327,18 +340,146 @@ INSERT INTO playoff VALUES
 (10, 9, 5, 5);
 
 
-INSERT INTO `match` VALUES
-(1, 1, 4, 1, 3, 1, 10, '112-108', 150.00, '2025-02-15'),
-(2, 8, 2, 8, 1, 2, 10, '105-98', 175.00, '2025-02-18'),
-(3, 10, 9, 10, 6, 3, 9, '118-101', 300.00, '2025-02-20'),
-(4, 6, 7, 6, 7, 4, 9, '97-104', 125.00, '2025-02-22'),
-(5, 3, 5, 3, 2, 5, 8, '115-110', 135.00, '2025-02-25'),
-(6, 4, 1, 4, 5, 6, 8, '121-119', 250.00, '2025-03-01'),
-(7, 2, 10, 2, 4, 7, 7, '99-112', 225.00, '2025-03-03'),
-(8, 5, 7, 5, 9, 8, 7, '108-95', 110.00, '2025-03-05'),
-(9, 9, 8, 9, 10, 1, 6, '102-113', 85.00, '2025-03-08'),
-(10, 6, 3, 6, 8, 2, 6, '125-98', 135.00, '2025-03-10');
+INSERT INTO `match` 
+(matchID, homeTeamID, visitingTeamID, stadiumID, streamingID, refereeID, bracketID, homeScore, visitingScore, ticket_cost, date) 
+VALUES
+-- Bracket 1
+(1, 19, 17, 3, 2, 2, 1, 101, 99, 89.25, '2022-05-01'),
+(2, 11, 6, 6, 3, 4, 1, 115, 107, 92.10, '2022-05-01'),
+(3, 15, 14, 1, 1, 1, 1, 97, 103, 87.50, '2022-05-01'),
+(4, 18, 5, 3, 3, 4, 1, 122, 118, 90.35, '2022-05-01'),
+(5, 19, 11, 1, 3, 4, 1, 110, 98, 85.90, '2022-05-05'),
+(6, 14, 18, 10, 5, 3, 1, 95, 102, 93.75, '2022-05-05'),
+(7, 19, 18, 2, 5, 4, 1, 119, 124, 88.60, '2022-05-09'),
 
+-- Bracket 2
+(8, 9, 11, 9, 1, 1, 2, 104, 97, 88.45, '2024-05-01'),
+(9, 18, 7, 3, 3, 4, 2, 121, 116, 91.20, '2024-05-01'),
+(10, 3, 14, 6, 5, 5, 2, 98, 101, 86.75, '2024-05-01'),
+(11, 20, 5, 6, 3, 1, 2, 113, 110, 92.90, '2024-05-01'),
+(12, 16, 17, 2, 1, 2, 2, 125, 119, 90.50, '2024-05-01'),
+(13, 4, 1, 6, 3, 4, 2, 96, 109, 85.60, '2024-05-01'),
+(14, 2, 6, 10, 3, 1, 2, 100, 98, 93.40, '2024-05-01'),
+(15, 12, 13, 8, 4, 5, 2, 118, 106, 89.75, '2024-05-01'),
+(16, 9, 18, 9, 3, 2, 2, 107, 95, 91.10, '2024-05-05'),
+(17, 14, 20, 1, 3, 3, 2, 112, 123, 87.85, '2024-05-05'),
+(18, 16, 1, 3, 4, 4, 2, 120, 98, 89.30, '2024-05-05'),
+(19, 2, 12, 8, 5, 4, 2, 102, 99, 92.25, '2024-05-05'),
+(20, 9, 20, 9, 1, 2, 2, 108, 124, 86.90, '2024-05-09'),
+(21, 16, 2, 9, 5, 5, 2, 115, 111, 94.00, '2024-05-09'),
+(22, 20, 16, 6, 4, 1, 2, 117, 105, 88.80, '2024-05-13'),
+
+-- Bracket 3
+(23, 18, 12, 7, 2, 5, 3, 105, 102, 89.90, '2023-05-01'),
+(24, 3, 8, 8, 2, 2, 3, 110, 99, 94.20, '2023-05-01'),
+(25, 5, 15, 2, 5, 4, 3, 122, 115, 87.80, '2023-05-01'),
+(26, 16, 10, 3, 1, 4, 3, 97, 124, 91.50, '2023-05-01'),
+(27, 18, 3, 5, 4, 1, 3, 101, 98, 85.75, '2023-05-05'),
+(28, 5, 10, 3, 2, 4, 3, 115, 103, 92.60, '2023-05-05'),
+(29, 18, 5, 10, 2, 3, 3, 124, 109, 88.20, '2023-05-09'),
+
+-- Bracket 4
+(30, 12, 6, 7, 3, 1, 4, 98, 112, 90.40, '2024-05-01'),
+(31, 13, 16, 1, 4, 2, 4, 120, 102, 85.85, '2024-05-01'),
+(32, 1, 17, 8, 1, 1, 4, 110, 117, 87.95, '2024-05-01'),
+(33, 14, 3, 7, 4, 2, 4, 123, 114, 89.10, '2024-05-01'),
+(34, 6, 13, 9, 1, 5, 4, 115, 101, 91.65, '2024-05-05'),
+(35, 17, 14, 5, 5, 4, 4, 96, 95, 94.25, '2024-05-05'),
+(36, 6, 17, 6, 5, 3, 4, 105, 99, 88.90, '2024-05-09'),
+
+-- Bracket 5
+(37, 1, 7, 2, 5, 4, 5, 101, 96, 88.55, '2023-05-01'),
+(38, 9, 17, 4, 4, 5, 5, 108, 112, 91.30, '2023-05-01'),
+(39, 2, 16, 8, 5, 3, 5, 117, 104, 86.95, '2023-05-01'),
+(40, 5, 8, 6, 5, 4, 5, 122, 115, 93.45, '2023-05-01'),
+(41, 1, 17, 9, 3, 1, 5, 111, 95, 87.80, '2023-05-05'),
+(42, 2, 5, 9, 4, 3, 5, 103, 99, 90.10, '2023-05-05'),
+(43, 1, 2, 2, 5, 3, 5, 119, 124, 89.70, '2023-05-09'),
+
+-- Bracket 6
+(44, 5, 7, 1, 5, 2, 6, 118, 107, 91.35, '2023-05-01'),
+(45, 14, 16, 5, 1, 4, 6, 125, 114, 89.20, '2023-05-01'),
+(46, 13, 9, 8, 1, 2, 6, 99, 112, 86.90, '2023-05-01'),
+(47, 4, 17, 7, 1, 2, 6, 105, 96, 93.60, '2023-05-01'),
+(48, 1, 11, 5, 1, 1, 6, 108, 103, 88.75, '2023-05-01'),
+(49, 18, 19, 7, 4, 4, 6, 116, 102, 90.95, '2023-05-01'),
+(50, 12, 3, 6, 1, 3, 6, 120, 118, 87.30, '2023-05-01'),
+(51, 20, 6, 5, 5, 4, 6, 110, 95, 92.80, '2023-05-01'),
+(52, 5, 14, 1, 1, 3, 6, 100, 117, 85.90, '2023-05-05'),
+(53, 9, 4, 6, 5, 3, 6, 122, 119, 93.25, '2023-05-05'),
+(54, 1, 18, 9, 2, 1, 6, 115, 98, 88.15, '2023-05-05'),
+(55, 12, 20, 4, 1, 1, 6, 105, 108, 90.45, '2023-05-05'),
+(56, 14, 9, 4, 2, 1, 6, 109, 95, 89.80, '2023-05-09'),
+(57, 1, 20, 2, 3, 3, 6, 97, 103, 85.65, '2023-05-09'),
+(58, 14, 20, 4, 4, 2, 6, 121, 113, 87.95, '2023-05-13'),
+
+-- Bracket 7
+(59, 9, 4, 5, 1, 1, 7, 110, 97, 91.45, '2020-05-01'),
+(60, 15, 20, 6, 4, 3, 7, 103, 117, 88.90, '2020-05-01'),
+(61, 18, 11, 5, 2, 2, 7, 125, 101, 92.75, '2020-05-01'),
+(62, 17, 10, 1, 2, 3, 7, 113, 105, 85.80, '2020-05-01'),
+(63, 1, 12, 7, 2, 1, 7, 116, 109, 90.10, '2020-05-01'),
+(64, 6, 8, 8, 5, 2, 7, 102, 99, 86.70, '2020-05-01'),
+(65, 16, 3, 4, 2, 4, 7, 108, 95, 88.30, '2020-05-01'),
+(66, 13, 2, 8, 3, 3, 7, 120, 97, 93.40, '2020-05-01'),
+(67, 9, 20, 8, 2, 5, 7, 112, 120, 89.60, '2020-05-05'),
+(68, 18, 17, 6, 5, 3, 7, 118, 104, 92.10, '2020-05-05'),
+(69, 1, 6, 4, 5, 1, 7, 119, 106, 85.95, '2020-05-05'),
+(70, 16, 13, 8, 4, 2, 7, 101, 114, 87.20, '2020-05-05'),
+(71, 20, 18, 7, 2, 2, 7, 115, 108, 90.55, '2020-05-09'),
+(72, 1, 13, 3, 5, 2, 7, 124, 98, 93.00, '2020-05-09'),
+(73, 20, 1, 10, 1, 1, 7, 109, 123, 88.15, '2020-05-13'),
+
+-- Bracket 8
+(74, 14, 8, 9, 5, 3, 8, 110, 101, 89.75, '2024-05-01'),
+(75, 15, 6, 1, 3, 1, 8, 103, 117, 87.10, '2024-05-01'),
+(76, 11, 1, 8, 4, 3, 8, 98, 122, 91.55, '2024-05-01'),
+(77, 20, 12, 3, 3, 3, 8, 125, 113, 90.20, '2024-05-01'),
+(78, 2, 9, 4, 3, 5, 8, 105, 99, 86.40, '2024-05-01'),
+(79, 5, 10, 8, 5, 5, 8, 115, 107, 88.85, '2024-05-01'),
+(80, 13, 7, 5, 4, 4, 8, 112, 104, 92.70, '2024-05-01'),
+(81, 17, 3, 9, 1, 3, 8, 118, 97, 90.35, '2024-05-01'),
+(82, 14, 6, 3, 1, 1, 8, 122, 116, 91.05, '2024-05-05'),
+(83, 1, 20, 8, 4, 3, 8, 99, 108, 85.95, '2024-05-05'),
+(84, 2, 5, 9, 2, 4, 8, 101, 113, 87.50, '2024-05-05'),
+(85, 13, 17, 10, 5, 2, 8, 117, 106, 89.60, '2024-05-05'),
+(86, 14, 20, 9, 5, 1, 8, 109, 114, 88.10, '2024-05-09'),
+(87, 5, 13, 9, 5, 2, 8, 97, 118, 93.15, '2024-05-09'),
+(88, 20, 13, 3, 1, 1, 8, 124, 110, 92.20, '2024-05-13'),
+
+-- Bracket 9
+(89, 11, 2, 2, 3, 4, 9, 105, 96, 91.25, '2021-05-01'),
+(90, 9, 14, 7, 1, 5, 9, 112, 103, 89.30, '2021-05-01'),
+(91, 6, 8, 5, 5, 3, 9, 117, 95, 87.60, '2021-05-01'),
+(92, 17, 12, 8, 3, 1, 9, 118, 107, 93.50, '2021-05-01'),
+(93, 3, 15, 10, 3, 4, 9, 99, 120, 85.95, '2021-05-01'),
+(94, 20, 13, 4, 2, 1, 9, 115, 104, 90.65, '2021-05-01'),
+(95, 19, 16, 2, 2, 3, 9, 121, 106, 86.85, '2021-05-01'),
+(96, 7, 1, 2, 4, 1, 9, 97, 111, 88.90, '2021-05-01'),
+(97, 11, 9, 10, 1, 5, 9, 109, 114, 92.40, '2021-05-05'),
+(98, 6, 17, 5, 4, 3, 9, 102, 116, 91.10, '2021-05-05'),
+(99, 15, 20, 4, 5, 4, 9, 120, 105, 90.20, '2021-05-05'),
+(100, 19, 1, 9, 3, 3, 9, 117, 108, 89.45, '2021-05-05'),
+(101, 9, 17, 1, 1, 2, 9, 108, 102, 88.15, '2021-05-09'),
+(102, 15, 19, 9, 5, 4, 9, 124, 112, 87.90, '2021-05-09'),
+(103, 9, 15, 2, 5, 4, 9, 115, 118, 93.00, '2021-05-13'),
+
+-- Bracket 10
+(104, 15, 7, 7, 2, 4, 10, 113, 97, 88.30, '2020-05-01'),
+(105, 3, 6, 7, 5, 3, 10, 105, 119, 91.45, '2020-05-01'),
+(106, 9, 4, 7, 2, 4, 10, 101, 112, 85.95, '2020-05-01'),
+(107, 8, 12, 5, 5, 3, 10, 98, 121, 89.70, '2020-05-01'),
+(108, 20, 5, 10, 5, 4, 10, 117, 103, 90.10, '2020-05-01'),
+(109, 16, 14, 8, 5, 2, 10, 106, 124, 92.85, '2020-05-01'),
+(110, 17, 2, 3, 2, 1, 10, 109, 95, 87.60, '2020-05-01'),
+(111, 1, 19, 2, 4, 2, 10, 118, 101, 88.80, '2020-05-01'),
+(112, 15, 6, 4, 3, 3, 10, 110, 104, 90.25, '2020-05-05'),
+(113, 4, 12, 2, 3, 5, 10, 107, 97, 89.90, '2020-05-05'),
+(114, 20, 14, 4, 3, 3, 10, 116, 102, 92.10, '2020-05-05'),
+(115, 17, 1, 4, 1, 5, 10, 119, 98, 86.75, '2020-05-05'),
+(116, 15, 4, 4, 2, 5, 10, 120, 106, 87.45, '2020-05-09'),
+(117, 20, 17, 6, 2, 5, 10, 109, 112, 91.95, '2020-05-09'),
+(118, 15, 20, 4, 4, 2, 10, 122, 115, 93.50, '2020-05-13');
 
 
 -- -------------------------
@@ -427,13 +568,12 @@ DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
 BEGIN
   SELECT 
-    m.matchID, m.score, m.Ticket_Cost, m.Date, 
+    m.score, m.Ticket_Cost, m.Date, 
     t1.Name AS HomeTeamName, 
     t2.Name AS VisitingTeamName, 
     s.Name AS StadiumName, 
     r.Name AS RefereeName, 
-    ss.Name AS StreamingService,
-    m.BracketID
+    ss.Name AS StreamingService
   FROM `match` m
   INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
   INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
@@ -441,6 +581,80 @@ BEGIN
   INNER JOIN Referee r ON m.refereeID = r.refereeID
   INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
   WHERE m.Date = match_date;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
+BEGIN
+  SELECT 
+    m.score, m.Ticket_Cost, m.Date, 
+    t1.Name AS HomeTeamName, 
+    t2.Name AS VisitingTeamName, 
+    s.Name AS StadiumName, 
+    r.Name AS RefereeName, 
+    ss.Name AS StreamingService
+  FROM `match` m
+  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN Referee r ON m.refereeID = r.refereeID
+  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
+  WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
+END$$
+DELIMITER ;
+
+-- Requirement: Matches must be in round order
+DELIMITER $$
+DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
+CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
+BEGIN
+    DECLARE matchCount INT;
+    DECLARE totalRounds INT;
+    DECLARE roundSize INT;
+    DECLARE roundNumber INT DEFAULT 1;
+    DECLARE matchIndex INT DEFAULT 0;
+    DECLARE offset INT DEFAULT 0;
+
+    -- Count number of matches and rounds
+    SELECT COUNT(*) INTO matchCount
+    FROM `match`
+    WHERE bracketID = in_bracketID;
+    SET totalRounds = LOG2(matchCount + 1);
+
+    -- Create temporary table to track the match order in case matchID isn't completely numerically ordered
+    DROP TEMPORARY TABLE IF EXISTS temp_matches;
+    CREATE TEMPORARY TABLE temp_matches (
+        idx INT AUTO_INCREMENT PRIMARY KEY,
+        matchID INT
+    );
+
+    -- This is why the matches need to be in order
+    INSERT INTO temp_matches (matchID)
+    SELECT matchID
+    FROM `match`
+    WHERE bracketID = in_bracketID
+    ORDER BY matchID;
+
+    -- Assigning rounds to matches
+    SET roundNumber = 1;
+    SET offset = 0;
+
+    WHILE roundNumber <= totalRounds DO
+        SET roundSize = POWER(2, totalRounds - roundNumber);
+        SET matchIndex = 0;
+
+        WHILE matchIndex < roundSize DO
+            UPDATE `match` AS m
+            JOIN temp_matches tm ON m.matchID = tm.matchID
+            SET m.round = roundNumber
+            WHERE tm.idx = offset + matchIndex + 1;
+            SET matchIndex = matchIndex + 1;
+        END WHILE;
+
+        SET offset = offset + roundSize;
+        SET roundNumber = roundNumber + 1;
+    END WHILE;
 END$$
 DELIMITER ;
 
@@ -498,7 +712,7 @@ BEGIN
     (CURRENT_DATE, CURRENT_TIMESTAMP, "INSERT", NEW.score, NEW.u_id, NEW.streamingID);
 
     UPDATE streaming_service 
-    SET rating = (rating + NEW.score)/(numRatings + 1),
+    SET rating = (rating*numRatings + NEW.score)/(numRatings + 1),
     numRatings = numRatings + 1
     WHERE streamingID = NEW.streamingID;
 END$$
@@ -541,5 +755,24 @@ BEGIN
   WHERE numRatings = 0;
 END$$
 DELIMITER ;
+
+-- -------------------------
+
+-- Admin privileges
+CREATE ROLE 'Sadmin';
+GRANT ALL PRIVILEGES ON db4.* TO 'Sadmin';
+
+-- User privileges
+CREATE ROLE 'Suser';
+
+GRANT SELECT ON db4.player TO 'Suser';
+GRANT SELECT ON db4.team TO 'Suser';
+GRANT SELECT ON db4.match TO 'Suser';
+GRANT SELECT ON db4.streaming_service TO 'Suser';
+GRANT SELECT ON db4.bracket TO 'Suser';
+GRANT SELECT ON db4.conference TO 'Suser';
+GRANT SELECT ON db4.rating TO 'Suser';
+
+GRANT INSERT, UPDATE, DELETE ON db4.rating TO 'Suser';
 -- -------------------------
 
