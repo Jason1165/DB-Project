@@ -5,7 +5,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     default-libmysqlclient-dev \
-    pkg-config
+    pkg-config \
+    python3-venv
 
 COPY . .
 
