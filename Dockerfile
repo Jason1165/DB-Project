@@ -6,7 +6,10 @@ RUN apt-get update && apt-get install -y \
     gcc \
     default-libmysqlclient-dev \
     pkg-config \
-    python3-venv
+    python3-venv \
+    libssl-dev \
+    libffi-dev \
+    build-essential
 
 COPY . .
 
