@@ -195,7 +195,7 @@ def search_bracket():
         brackets = execute_query(
             query,
             (search_value,),
-            fetchall=True  # ✅ Fetch all results, not just one
+            fetchall=True
         )
 
         if not brackets:
@@ -351,6 +351,89 @@ def teams():
     )
 
     return render_template('teams.html', teams_data=teams_data)
+
+@app.route('/team/<int:team_id>')
+def team_detail(team_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    # Get basic team information
+    team = execute_query(
+        """
+        SELECT t.*, c.side AS conference_name
+        FROM team t
+        LEFT JOIN conference c ON t.conferenceID = c.conferenceID
+        WHERE t.teamID = %s
+        """,
+        (team_id,),
+        fetchone=True
+    )
+
+    if not team:
+        return "Team not found", 404
+
+    # Get team players
+    players = execute_query(
+        """
+        SELECT p.playerID, p.name, p.position, p.number, p.height, p.age, p.salary
+        FROM player p
+        WHERE p.teamID = %s
+        ORDER BY p.position, p.name
+        """,
+        (team_id,),
+        fetchall=True
+    )
+
+    # Get coach information
+    coach = execute_query(
+        """
+        SELECT c.*
+        FROM coach c
+        WHERE c.coachID = %s
+        """,
+        (team['coachID'],),
+        fetchone=True
+    )
+
+    # Get stadium information
+    stadium = execute_query(
+        """
+        SELECT s.*
+        FROM stadium s
+        WHERE s.stadiumID = %s
+        """,
+        (team['stadiumID'],),
+        fetchone=True
+    )
+
+    # Get top 3 referees (simplified for now)
+    refs = execute_query(
+        """
+        SELECT r.*
+        FROM referee r
+        LIMIT 3
+        """,
+        fetchall=True
+    )
+
+    # Get sponsor information
+    sponsor = execute_query(
+        """
+        SELECT s.*
+        FROM sponsor s
+        WHERE s.sponsorID = %s
+        """,
+        (team['sponsorID'],),
+        fetchone=True
+    )
+
+    return render_template('team_detail.html',
+                          team=team,
+                          players=players,
+                          coach=coach,
+                          stadium=stadium,
+                          refs=refs,
+                          sponsor=sponsor)
 
 @app.route('/streaming_services/<int:service_id>', methods=['GET', 'POST'])
 def manage_rating(service_id):
