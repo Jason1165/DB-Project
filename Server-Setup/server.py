@@ -236,32 +236,40 @@ def search():
             )
     return render_template('playerSearch.html', player_data=player_data)
 
-@app.route('/matchSearch', methods=['GET', 'POST'])
-def match_search():
+@app.route('/match/<int:match_id>')
+def view_match(match_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    match_data = None
+    match = execute_query(
+        """
+        SELECT m.matchID, 
+               m.bracketID, 
+               th.name AS home_team, 
+               tv.name AS visiting_team,
+               m.homeScore, 
+               m.visitingScore,
+               m.date,
+               s.name AS stadium_name,
+               r.name AS referee_name,
+               ss.streamingLink,
+               ss.name AS streaming_service_name
+        FROM `match` m
+        LEFT JOIN team th ON m.homeTeamID = th.teamID
+        LEFT JOIN team tv ON m.visitingTeamID = tv.teamID
+        LEFT JOIN stadium s ON m.stadiumID = s.stadiumID
+        LEFT JOIN referee r ON m.refereeID = r.refereeID
+        LEFT JOIN streaming_service ss ON m.streamingID = ss.streamingID
+        WHERE m.matchID = %s
+        """,
+        (match_id,),
+        fetchone=True
+    )
 
-    if request.method == 'POST':
-        mode = request.form.get('search_mode')
+    if not match:
+        return "Match not found", 404
 
-        if mode == 'team':
-            search_value = request.form.get('team_query')
-            match_data = execute_query(
-                "CALL GetMatchInfoByTeam(%s)",
-                (f"%{search_value}%",),
-                fetchall=True
-            )
-        elif mode == 'date':
-            search_value = request.form.get('date_query')
-            match_data = execute_query(
-                "CALL GetMatchInfoByDate(%s)",
-                (search_value,),
-                fetchall=True
-            )
-
-    return render_template('matchSearch.html', match_data=match_data)
+    return render_template('matchNum.html', match=match)
 
 @app.route('/bracket/<int:bracket_id>')
 def view_bracket(bracket_id):

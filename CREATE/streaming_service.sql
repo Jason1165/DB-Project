@@ -4,5 +4,6 @@ CREATE TABLE streaming_service (
     price DECIMAL(5,2),
     rating FLOAT,
     numRatings INT,
+    streamingLink VARCHAR(255),
     PRIMARY KEY (streamingID)
 );
