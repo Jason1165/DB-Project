@@ -1,16 +1,16 @@
---Admin privileges
-CREATE ROLE Sadmin;
-GRANT ALL PRIVILEGES ON *.* TO 'Sadmin';
+-- Admin privileges
+CREATE ROLE 'Sadmin';
+GRANT ALL PRIVILEGES ON db4.* TO 'Sadmin';
 
---User privileges
-CREATE ROLE Suser;
+-- User privileges
+CREATE ROLE 'Suser';
 
-GRANT SELECT ON *.player TO Suser;
-GRANT SELECT ON *.team TO Suser;
-GRANT SELECT ON *.match TO Suser;
-GRANT SELECT ON *.streaming_service TO Suser;
-GRANT SELECT ON *.bracket TO Suser;
-GRANT SELECT ON *.conference TO Suser;
-GRANT SELECT ON *.rating TO Suser;
+GRANT SELECT ON db4.player TO 'Suser';
+GRANT SELECT ON db4.team TO 'Suser';
+GRANT SELECT ON db4.match TO 'Suser';
+GRANT SELECT ON db4.streaming_service TO 'Suser';
+GRANT SELECT ON db4.bracket TO 'Suser';
+GRANT SELECT ON db4.conference TO 'Suser';
+GRANT SELECT ON db4.rating TO 'Suser';
 
-GRANT INSERT, UPDATE, DELETE ON *.rating TO Suser;
+GRANT INSERT, UPDATE, DELETE ON db4.rating TO 'Suser';
