@@ -65,8 +65,6 @@ def initdb(secret):
         return f"Error: {str(e)}", 500
 
 
-
-
 def execute_query(query, params = None, fetchone = False, fetchall = False, commit = False):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute(query, params or ())

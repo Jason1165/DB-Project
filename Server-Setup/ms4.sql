@@ -507,8 +507,8 @@ DELIMITER $$
 CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
-  FROM Player p
-  INNER JOIN Team t on p.teamID = t.teamID
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID
   WHERE p.Name LIKE CONCAT('%', player_name, '%'); 
 END$$
 
