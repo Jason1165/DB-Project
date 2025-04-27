@@ -1,7 +1,7 @@
 SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS `ratingAuditLog`;
 DROP TABLE IF EXISTS `rating`;
-DROP TABLE IF EXISTS `user`;
+-- DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `match`;
 DROP TABLE IF EXISTS `playoff`;
 DROP TABLE IF EXISTS `donation`;
@@ -157,12 +157,12 @@ CREATE TABLE `match` (
 );
 
 
-CREATE TABLE user (
-    u_id INT AUTO_INCREMENT,
-    username VARCHAR(25) UNIQUE,
-    password VARCHAR(255),
-    PRIMARY KEY(u_id)
-);
+-- CREATE TABLE user (
+--     u_id INT AUTO_INCREMENT,
+--     username VARCHAR(25) UNIQUE,
+--     password VARCHAR(255),
+--     PRIMARY KEY(u_id)
+-- );
 
 
 CREATE TABLE rating (
@@ -676,17 +676,40 @@ END$$
 DELIMITER ;
 
 
-DROP FUNCTION IF EXISTS CountPlayersByTeam;
+DROP IF EXISTS PROCEDURE GetBracketByTeam;
 DELIMITER $$
-CREATE FUNCTION CountPlayersByTeam(team_name VARCHAR(100))
+CREATE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
+BEGIN
+    SELECT DISTINCT m.bracketID
+    FROM `match` m
+    JOIN team t1 ON m.homeTeamID = t1.teamID
+    JOIN team t2 ON m.visitingTeamID = t2.teamID
+    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name = CONCAT('%', teamName,'%');
+END$$
+DELIMITER;
+
+
+DROP IF EXISTS GetBracketBySeason;
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
+BEGIN
+    SELECT DISTINCT b.bracketID
+    FROM bracket b
+    WHERE b.season LIKE CONCAT('%', season, '%');
+END$$
+DELIMITER ;
+
+
+DROP FUNCTION IF EXISTS countPlayersByTeam;
+DELIMITER $$
+CREATE FUNCTION countPlayersByTeam(inTeamID INT)
 RETURNS INT
 DETERMINISTIC
 BEGIN
   DECLARE total INT;
   SELECT COUNT(*) INTO total
   FROM player p
-  JOIN team t ON p.teamID = t.teamID
-  WHERE t.name LIKE team_name;
+  WHERE p.teamID = inTeamID;
   RETURN total;
 END$$
 DELIMITER ;
