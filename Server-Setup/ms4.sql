@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `ratingauditlog`;
 DROP TABLE IF EXISTS `rating`;
 DROP TABLE IF EXISTS `match`;
@@ -13,6 +12,7 @@ DROP TABLE IF EXISTS `conference`;
 DROP TABLE IF EXISTS `sponsor`;
 DROP TABLE IF EXISTS `stadium`;
 DROP TABLE IF EXISTS `coach`;
+DROP TABLE IF EXISTS `user`;
 
 
 CREATE TABLE coach (
