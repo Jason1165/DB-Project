@@ -1,45 +1,49 @@
 -- PROCEDURES
 
 --- SUPPORT FOR SEARCH BAR and PLAYER PAGE FROM MILESTONE 2
+DROP PROCEDURE IF EXISTS GetPlayerByName;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
+CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
-  FROM Player p
-  INNER JOIN Team t on p.teamID = t.teamID
-  WHERE p.Name LIKE CONCAT('%', player_name, '%'); -- FUZZY SEARCH
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID
+  WHERE p.Name LIKE CONCAT('%', player_name, '%'); 
 END$$
 DELIMITER ;
 
---- 
+
+DROP PROCEDURE IF EXISTS GetPlayerByTeam;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
+CREATE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
-  FROM Player p
-  INNER JOIN Team t on p.teamID = t.teamID
-  WHERE t.Name LIKE CONCAT('%', team_name, '%'); -- FUZZY SEARCH
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID
+  WHERE t.Name LIKE CONCAT('%', team_name, '%');
 END$$
 DELIMITER ;
 
----
+
+DROP PROCEDURE IF EXISTS GetPlayerByPosition;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
+CREATE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
-  FROM Player p
-  INNER JOIN Team t on p.teamID = t.teamID
-  WHERE p.Position LIKE CONCAT('%', position_name, '%'); -- FUZZY SEARCH
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID
+  WHERE p.Position LIKE CONCAT('%', position_name, '%'); 
 END$$
 DELIMITER ;
 
---- SUPPORT FOR GETTING PLAYERS
+
+DROP PROCEDURE IF EXISTS GetAllPlayers;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetAllPlayers()
+CREATE PROCEDURE GetAllPlayers()
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
-  FROM Player p
-  INNER JOIN Team t on p.teamID = t.teamID;
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID;
 END$$
 DELIMITER ;
 

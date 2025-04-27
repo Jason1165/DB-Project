@@ -605,7 +605,7 @@ DROP PROCEDURE IF EXISTS GetPlayerByName;
 DELIMITER $$
 CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM player p
   INNER JOIN team t on p.teamID = t.teamID
   WHERE p.Name LIKE CONCAT('%', player_name, '%'); 
@@ -617,7 +617,7 @@ DROP PROCEDURE IF EXISTS GetPlayerByTeam;
 DELIMITER $$
 CREATE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM player p
   INNER JOIN team t on p.teamID = t.teamID
   WHERE t.Name LIKE CONCAT('%', team_name, '%');
@@ -629,7 +629,7 @@ DROP PROCEDURE IF EXISTS GetPlayerByPosition;
 DELIMITER $$
 CREATE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM player p
   INNER JOIN team t on p.teamID = t.teamID
   WHERE p.Position LIKE CONCAT('%', position_name, '%'); 
@@ -641,7 +641,7 @@ DROP PROCEDURE IF EXISTS GetAllPlayers;
 DELIMITER $$
 CREATE PROCEDURE GetAllPlayers()
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
   FROM player p
   INNER JOIN team t on p.teamID = t.teamID;
 END$$
