@@ -57,7 +57,7 @@ def initdb(secret):
         return "Unauthorized", 403
     try:
         cursor = mysql.connection.cursor()
-        execute_sql_file(cursor, 'ms4.sql')  # your SQL file
+        execute_sql_file(cursor, 'ms4.sql')
         mysql.connection.commit()
         cursor.close()
         return "Database successfully initialized!"

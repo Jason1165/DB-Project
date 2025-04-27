@@ -1,7 +1,7 @@
 SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS `ratingAuditLog`;
 DROP TABLE IF EXISTS `rating`;
--- DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `match`;
 DROP TABLE IF EXISTS `playoff`;
 DROP TABLE IF EXISTS `donation`;
@@ -157,12 +157,12 @@ CREATE TABLE `match` (
 );
 
 
--- CREATE TABLE user (
---     u_id INT AUTO_INCREMENT,
---     username VARCHAR(25) UNIQUE,
---     password VARCHAR(255),
---     PRIMARY KEY(u_id)
--- );
+CREATE TABLE user (
+    u_id INT AUTO_INCREMENT,
+    username VARCHAR(25) UNIQUE,
+    password VARCHAR(255),
+    PRIMARY KEY(u_id)
+);
 
 
 CREATE TABLE rating (
@@ -626,6 +626,7 @@ BEGIN
 END$$
 DELIMITER ;
 
+
 DROP PROCEDURE IF EXISTS OrganizeBracketMatches;
 DELIMITER $$
 CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
@@ -676,7 +677,7 @@ END$$
 DELIMITER ;
 
 
-DROP IF EXISTS PROCEDURE GetBracketByTeam;
+DROP PROCEDURE IF EXISTS GetBracketByTeam;
 DELIMITER $$
 CREATE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
 BEGIN
@@ -689,7 +690,7 @@ END$$
 DELIMITER;
 
 
-DROP IF EXISTS GetBracketBySeason;
+DROP PROCEDURE IF EXISTS GetBracketBySeason;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
 BEGIN
