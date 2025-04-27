@@ -502,14 +502,14 @@ VALUES
 
 COMMIT;
 
-DELIMITER $$
 DROP PROCEDURE IF EXISTS GetPlayerByName;
-CREATE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
+DELIMITER $$
+CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM player p
   INNER JOIN team t on p.teamID = t.teamID
-  WHERE t.Name LIKE CONCAT('%', team_name, '%');
+  WHERE p.Name LIKE CONCAT('%', player_name, '%'); 
 END$$
-DELIMITER ;
+
 COMMIT;
