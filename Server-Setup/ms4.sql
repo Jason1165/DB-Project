@@ -502,8 +502,8 @@ VALUES
 
 COMMIT;
 
-DROP PROCEDURE IF EXISTS GetPlayerByName;
 DELIMITER $$
+DROP PROCEDURE IF EXISTS GetPlayerByName;
 CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
@@ -511,5 +511,273 @@ BEGIN
   INNER JOIN team t on p.teamID = t.teamID
   WHERE p.Name LIKE CONCAT('%', player_name, '%'); 
 END$$
+COMMIT;
 
+DROP PROCEDURE IF EXISTS GetPlayerByPosition;
+CREATE OR REPLACE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
+BEGIN
+  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID
+  WHERE p.Position LIKE CONCAT('%', position_name, '%'); 
+END$$
+COMMIT;
+
+
+DROP PROCEDURE IF EXISTS GetAllPlayers;
+CREATE PROCEDURE GetAllPlayers()
+BEGIN
+  SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID;
+END$$
+COMMIT;
+
+
+DROP PROCEDURE IF EXISTS GetTeamsInConference;
+CREATE PROCEDURE GetTeamsInConference(IN conference_name VARCHAR(100))
+BEGIN
+  SELECT 
+    t.teamID, t.Name, t.Championships_Won, t.playoffs_won, t.earnings, 
+    c.side AS ConferenceSide
+  FROM team t
+  INNER JOIN conference c ON t.conferenceID = c.conferenceID
+  WHERE c.side LIKE CONCAT('%', conference_name, '%');
+END$$
+COMMIT;
+
+
+DROP PROCEDURE IF EXISTS GetTeamInfo;
+CREATE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
+BEGIN
+  SELECT
+    t.TeamID, t.Name AS TeamName, t.Championships_Won, t.Playoffs_Won, t.Earnings,
+    c.Name AS CoachName,
+    s.Name AS StadiumName, s.Location AS StadiumLocation, s.Capacity AS StadiumCapacity,
+    sp.Name AS SponsorName, sp.Money AS SponsorMoney,
+    co.Side AS ConferenceSide
+  FROM team t
+  INNER JOIN coach c ON t.coachID = c.coachID
+  INNER JOIN stadium s ON t.stadiumID = s.stadiumID
+  INNER JOIN sponsor sp ON t.sponsorID = sp.sponsorID
+  INNER JOIN conference co ON t.conferenceID = co.conferenceID
+  WHERE t.Name LIKE CONCAT('%', team_name, '%');
+END$$
+COMMIT;
+
+
+DROP PROCEDURE IF EXISTS GetMatchInfoByDate;
+CREATE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
+BEGIN
+  SELECT 
+    m.score, m.Ticket_Cost, m.Date, 
+    t1.Name AS HomeTeamName, 
+    t2.Name AS VisitingTeamName, 
+    s.Name AS StadiumName, 
+    r.Name AS RefereeName, 
+    ss.Name AS StreamingService
+  FROM `match` m
+  INNER JOIN team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN referee r ON m.refereeID = r.refereeID
+  INNER JOIN streaming_service ss ON m.streamingID = ss.streamingID
+  WHERE m.Date = match_date;
+END$$
+COMMIT;
+
+
+DROP PROCEDURE IF EXISTS GetMatchInfoByTeam;
+CREATE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
+BEGIN
+  SELECT 
+    m.score, m.Ticket_Cost, m.Date, 
+    t1.Name AS HomeTeamName, 
+    t2.Name AS VisitingTeamName, 
+    s.Name AS StadiumName, 
+    r.Name AS RefereeName, 
+    ss.Name AS StreamingService
+  FROM `match` m
+  INNER JOIN team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN referee r ON m.refereeID = r.refereeID
+  INNER JOIN streaming_service ss ON m.streamingID = ss.streamingID
+  WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
+END$$
+COMMIT;
+
+
+-- Requirement: Matches must be in round order
+DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
+CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
+BEGIN
+    DECLARE matchCount INT;
+    DECLARE totalRounds INT;
+    DECLARE roundSize INT;
+    DECLARE roundNumber INT DEFAULT 1;
+    DECLARE matchIndex INT DEFAULT 0;
+    DECLARE offset INT DEFAULT 0;
+
+    -- Count number of matches and rounds
+    SELECT COUNT(*) INTO matchCount
+    FROM `match`
+    WHERE bracketID = in_bracketID;
+    SET totalRounds = LOG2(matchCount + 1);
+
+    -- Create temporary table to track the match order in case matchID isn't completely numerically ordered
+    DROP TEMPORARY TABLE IF EXISTS temp_matches;
+    CREATE TEMPORARY TABLE temp_matches (
+        idx INT AUTO_INCREMENT PRIMARY KEY,
+        matchID INT
+    );
+
+    -- This is why the matches need to be in order
+    INSERT INTO temp_matches (matchID)
+    SELECT matchID
+    FROM `match`
+    WHERE bracketID = in_bracketID
+    ORDER BY matchID;
+
+    -- Assigning rounds to matches
+    SET roundNumber = 1;
+    SET offset = 0;
+
+    WHILE roundNumber <= totalRounds DO
+        SET roundSize = POWER(2, totalRounds - roundNumber);
+        SET matchIndex = 0;
+
+        WHILE matchIndex < roundSize DO
+            UPDATE `match` AS m
+            JOIN temp_matches tm ON m.matchID = tm.matchID
+            SET m.round = roundNumber
+            WHERE tm.idx = offset + matchIndex + 1;
+            SET matchIndex = matchIndex + 1;
+        END WHILE;
+
+        SET offset = offset + roundSize;
+        SET roundNumber = roundNumber + 1;
+    END WHILE;
+END$$
+COMMIT;
+
+
+-- FUNCTIONS
+DROP FUNCTION IF EXISTS CountPlayersByTeam;
+CREATE FUNCTION CountPlayersByTeam(team_name VARCHAR(100))
+RETURNS INT
+DETERMINISTIC
+BEGIN
+  DECLARE total INT;
+  SELECT COUNT(*) INTO total
+  FROM player p
+  JOIN team t ON p.teamID = t.teamID
+  WHERE t.name LIKE team_name;
+  RETURN total;
+END$$
+COMMIT;
+
+
+-- TRIGGERS
+DROP TRIGGER IF EXISTS update_championships_won;
+CREATE TRIGGER update_championships_won
+AFTER INSERT ON playoff
+FOR EACH ROW
+BEGIN
+  UPDATE team
+  SET Championships_Won = Championships_Won + 1
+  WHERE TeamID = NEW.ChampionID;
+END$$
+DELIMITER ;
+COMMIT;
+
+
+DROP TRIGGER IF EXISTS new_donation;
+CREATE TRIGGER new_donation
+AFTER INSERT ON donation
+FOR EACH ROW
+BEGIN
+  UPDATE sponsor
+  SET money = money + NEW.amount
+  WHERE sponsorID = NEW.sponsorID;
+  UPDATE team 
+  SET earnings = earnings + new.amount
+  WHERE teamID = NEW.teamID;
+END$$
+DELIMITER ;
+COMMIT;
+
+
+DROP TRIGGER IF EXISTS ratingAdded; 
+CREATE TRIGGER ratingAdded
+AFTER INSERT ON rating
+FOR EACH ROW 
+BEGIN
+    INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+    (CURRENT_DATE, CURRENT_TIMESTAMP, "INSERT", NEW.score, NEW.u_id, NEW.streamingID);
+
+    UPDATE streaming_service 
+    SET rating = (rating*numRatings + NEW.score)/(numRatings + 1),
+    numRatings = numRatings + 1
+    WHERE streamingID = NEW.streamingID;
+END$$
+COMMIT;
+
+
+DROP TRIGGER IF EXISTS ratingUpdated;
+CREATE TRIGGER ratingUpdated 
+AFTER UPDATE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "UPDATE", NEW.score, NEW.u_id, NEW.streamingID);
+
+  UPDATE streaming_service
+  SET rating = ((rating * numRatings) - OLD.score + NEW.score)/numRatings
+  WHERE streamingID = NEW.streamingID;
+END$$
+COMMIT;
+
+
+DROP TRIGGER IF EXISTS ratingDeleted;
+CREATE TRIGGER ratingDeleted 
+AFTER DELETE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "DELETE", OLD.u_id, OLD.streamingID);
+  
+  UPDATE streaming_service
+  SET rating = CASE 
+    WHEN (numRatings - 1) = 0 THEN 0
+    ELSE ((rating * numRatings) - OLD.score) / (numRatings - 1)
+  END,
+  numRatings = numRatings - 1
+  WHERE streamingID = OLD.streamingID;
+
+  UPDATE streaming_service 
+  SET rating = 0
+  WHERE numRatings = 0;
+END$$
+COMMIT;
+
+-- -------------------------
+
+-- Admin privileges
+CREATE USER 'Sadmin';
+GRANT ALL PRIVILEGES ON railway.* TO 'Sadmin';
+
+-- User privileges
+CREATE USER 'Suser';
+
+GRANT SELECT ON railway.player TO 'Suser';
+GRANT SELECT ON railway.team TO 'Suser';
+GRANT SELECT ON railway.match TO 'Suser';
+GRANT SELECT ON railway.streaming_service TO 'Suser';
+GRANT SELECT ON railway.bracket TO 'Suser';
+GRANT SELECT ON railway.conference TO 'Suser';
+GRANT SELECT ON railway.rating TO 'Suser';
+
+GRANT INSERT, UPDATE, DELETE ON railway.rating TO 'Suser';
+-- -------------------------
 COMMIT;
