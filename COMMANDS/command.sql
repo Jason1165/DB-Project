@@ -196,15 +196,14 @@ DELIMITER ;
 
 -- FUNCTIONS
 DELIMITER $$
-CREATE FUNCTION CountPlayersByTeam(team_name VARCHAR(100))
+CREATE FUNCTION countPlayersByTeam(inTeamID INT)
 RETURNS INT
 DETERMINISTIC
 BEGIN
   DECLARE total INT;
   SELECT COUNT(*) INTO total
-  FROM Player p
-  JOIN Team t ON p.teamID = t.teamID
-  WHERE t.name LIKE team_name;
+  FROM player p
+  WHERE p.teamID = inTeamID;
   RETURN total;
 END$$
 DELIMITER ;

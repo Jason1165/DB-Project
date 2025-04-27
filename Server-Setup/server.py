@@ -399,6 +399,13 @@ def team_detail(team_id):
     if not team:
         return "Team not found", 404
 
+    player_count_result = execute_query(
+        "SELECT countPlayersByTeam(%s) AS player_count",
+        (team_id,),
+        fetchone=True
+    )
+    player_count = player_count_result['player_count'] if player_count_result else 0
+
     # Get team players
     players = execute_query(
         """
@@ -460,7 +467,8 @@ def team_detail(team_id):
                           coach=coach,
                           stadium=stadium,
                           refs=refs,
-                          sponsor=sponsor)
+                          sponsor=sponsor,
+                          player_count=player_count)
 
 @app.route('/streaming_services/<int:service_id>', methods=['GET', 'POST'])
 def manage_rating(service_id):
