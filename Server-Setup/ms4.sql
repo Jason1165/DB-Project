@@ -687,7 +687,7 @@ BEGIN
     JOIN team t2 ON m.visitingTeamID = t2.teamID
     WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name LIKE CONCAT('%', teamName,'%');
 END$$
-DELIMITER;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS GetBracketBySeason;
