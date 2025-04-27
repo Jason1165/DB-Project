@@ -357,7 +357,7 @@ def view_bracket(bracket_id):
 
 @app.route('/streaming_services')
 def streaming_services():
-    services = execute_query("SELECT * FROM Streaming_Service", fetchall=True)
+    services = execute_query("SELECT * FROM streaming_service", fetchall=True)
     return render_template('streaming_services.html', services=services)
 
 @app.route('/teams', methods=['GET'])
@@ -472,32 +472,32 @@ def manage_rating(service_id):
     if request.method == 'POST':
         score = int(request.form.get('rating'))
         existing = execute_query(
-            "SELECT * FROM Rating WHERE u_id = %s AND streamingID = %s",
+            "SELECT * FROM rating WHERE u_id = %s AND streamingID = %s",
             (user_id, service_id),
             fetchone=True
         )
 
         if existing:
             execute_query(
-                "UPDATE Rating SET score = %s WHERE u_id = %s AND streamingID = %s",
+                "UPDATE rating SET score = %s WHERE u_id = %s AND streamingID = %s",
                 (score, user_id, service_id),
                 commit=True
             )
         else:
             execute_query(
-                "INSERT INTO Rating (score, u_id, streamingID) VALUES (%s, %s, %s)",
+                "INSERT INTO rating (score, u_id, streamingID) VALUES (%s, %s, %s)",
                 (score, user_id, service_id),
                 commit=True
             )
 
     ratings = execute_query(
-        "SELECT r.score, u.username FROM Rating r JOIN User u ON r.u_id = u.u_id WHERE streamingID = %s",
+        "SELECT r.score, u.username FROM rating r JOIN sser u ON r.u_id = u.u_id WHERE streamingID = %s",
         (service_id,),
         fetchall=True
     )
 
     my_rating = execute_query(
-        "SELECT * FROM Rating WHERE u_id = %s AND streamingID = %s",
+        "SELECT * FROM rating WHERE u_id = %s AND streamingID = %s",
         (user_id, service_id),
         fetchone=True
     )
@@ -513,7 +513,7 @@ def delete_rating(service_id):
     user_id = session['user_id']
 
     execute_query(
-        "DELETE FROM Rating WHERE u_id = %s AND streamingID = %s",
+        "DELETE FROM rating WHERE u_id = %s AND streamingID = %s",
         (user_id, service_id),
         commit=True
     )

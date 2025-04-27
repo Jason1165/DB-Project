@@ -626,9 +626,8 @@ BEGIN
 END$$
 DELIMITER ;
 
-
+DROP PROCEDURE IF EXISTS OrganizeBracketMatches;
 DELIMITER $$
-DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
 CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
 BEGIN
     DECLARE matchCount INT;
