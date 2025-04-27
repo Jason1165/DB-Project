@@ -1,3 +1,4 @@
+SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS `ratingauditlog`;
 DROP TABLE IF EXISTS `rating`;
 DROP TABLE IF EXISTS `user`;
@@ -13,7 +14,7 @@ DROP TABLE IF EXISTS `conference`;
 DROP TABLE IF EXISTS `sponsor`;
 DROP TABLE IF EXISTS `stadium`;
 DROP TABLE IF EXISTS `coach`;
-
+SET foreign_key_checks = 1;
 
 CREATE TABLE coach (
     coachID INT AUTO_INCREMENT,
