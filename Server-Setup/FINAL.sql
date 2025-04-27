@@ -905,21 +905,21 @@ CREATE ROLE 'Suser';
 DROP VIEW IF EXISTS playerPublic;
 CREATE VIEW playerPublic AS 
 SELECT name, position, number, height, age, salary
-FROM railway.player;
+FROM db4.player;
 
 DROP VIEW IF EXISTS teamPublic;
 CREATE OR REPLACE VIEW teamPublic AS
 SELECT name, championships_won, playoffs_won, earnings
-FROM railway.team;
+FROM db4.team;
 
 DROP VIEW IF EXISTS ratingPublic;
 CREATE OR REPLACE VIEW ratingPublic AS
 SELECT score
-FROM railway.rating;
+FROM db4.rating;
 -- Granting said views
-GRANT SELECT ON railway.playerPublic TO 'Suser';
-GRANT SELECT ON railway.teamPublic TO 'Suser';
-GRANT SELECT ON railway.ratingPublic TO 'Suser';
+GRANT SELECT ON db4.playerPublic TO 'Suser';
+GRANT SELECT ON db4.teamPublic TO 'Suser';
+GRANT SELECT ON db4.ratingPublic TO 'Suser';
 -- I don't believe we need these as of now because these aren't really searchable
 -- uncomment if it breaks things in accessing said info, then comment the views out 
 -- GRANT SELECT ON db4.match TO 'Suser';
@@ -928,4 +928,4 @@ GRANT SELECT ON railway.ratingPublic TO 'Suser';
 -- GRANT SELECT ON db4.conference TO 'Suser';
 -- GRANT SELECT ON db4.rating TO 'Suser';
 
-GRANT INSERT, UPDATE, DELETE ON railway.rating TO 'Suser';
+GRANT INSERT, UPDATE, DELETE ON db4.rating TO 'Suser';
