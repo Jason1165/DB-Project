@@ -46,7 +46,7 @@ def execute_sql_file(cursor, filename):
                         cursor.execute(final_statement)
                     except Exception as e:
                         print(f"Line {line_number}: Error executing SQL: {final_statement[:100]}...")
-                        print(f"Error: {str(e)}")
+                        print(f"Error Execute: {str(e)}")
                 statement = ''
     print("DONE.")
 
@@ -62,7 +62,7 @@ def initdb(secret):
         cursor.close()
         return "Database successfully initialized!"
     except Exception as e:
-        return f"Error: {str(e)}", 500
+        return f"Error Init: {str(e)}", 500
 
 
 def execute_query(query, params = None, fetchone = False, fetchall = False, commit = False):
