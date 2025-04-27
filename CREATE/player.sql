@@ -7,6 +7,7 @@ CREATE TABLE player (
     height int,
     age INT,
     salary float,
+    picLink VARCHAR(255),
     PRIMARY KEY(playerID),
     FOREIGN KEY(teamID) REFERENCES team(teamID)
 );
