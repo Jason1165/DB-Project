@@ -499,11 +499,11 @@ VALUES
 (117, 20, 17, 6, 2, 5, 10, 109, 112, 91.95, '2020-05-09'),
 (118, 15, 20, 4, 4, 2, 10, 122, 115, 93.50, '2020-05-13');
 
-
 COMMIT;
 
-DELIMITER $$
+
 DROP PROCEDURE IF EXISTS GetPlayerByName;
+DELIMITER $$
 CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
@@ -511,30 +511,46 @@ BEGIN
   INNER JOIN team t on p.teamID = t.teamID
   WHERE p.Name LIKE CONCAT('%', player_name, '%'); 
 END$$
-COMMIT;
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS GetPlayerByTeam;
+DELIMITER $$
+CREATE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
+BEGIN
+  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM player p
+  INNER JOIN team t on p.teamID = t.teamID
+  WHERE t.Name LIKE CONCAT('%', team_name, '%');
+END$$
+DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS GetPlayerByPosition;
-CREATE OR REPLACE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
+DELIMITER $$
+CREATE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM player p
   INNER JOIN team t on p.teamID = t.teamID
   WHERE p.Position LIKE CONCAT('%', position_name, '%'); 
 END$$
-COMMIT;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS GetAllPlayers;
+DELIMITER $$
 CREATE PROCEDURE GetAllPlayers()
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
   FROM player p
   INNER JOIN team t on p.teamID = t.teamID;
 END$$
-COMMIT;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS GetTeamsInConference;
+DELIMITER $$
 CREATE PROCEDURE GetTeamsInConference(IN conference_name VARCHAR(100))
 BEGIN
   SELECT 
@@ -544,10 +560,11 @@ BEGIN
   INNER JOIN conference c ON t.conferenceID = c.conferenceID
   WHERE c.side LIKE CONCAT('%', conference_name, '%');
 END$$
-COMMIT;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS GetTeamInfo;
+DELIMITER $$
 CREATE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
 BEGIN
   SELECT
@@ -556,17 +573,18 @@ BEGIN
     s.Name AS StadiumName, s.Location AS StadiumLocation, s.Capacity AS StadiumCapacity,
     sp.Name AS SponsorName, sp.Money AS SponsorMoney,
     co.Side AS ConferenceSide
-  FROM team t
+  FROM Team t
   INNER JOIN coach c ON t.coachID = c.coachID
   INNER JOIN stadium s ON t.stadiumID = s.stadiumID
   INNER JOIN sponsor sp ON t.sponsorID = sp.sponsorID
   INNER JOIN conference co ON t.conferenceID = co.conferenceID
   WHERE t.Name LIKE CONCAT('%', team_name, '%');
 END$$
-COMMIT;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS GetMatchInfoByDate;
+DELIMITER $$
 CREATE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
 BEGIN
   SELECT 
@@ -581,13 +599,14 @@ BEGIN
   INNER JOIN team t2 ON m.VisitingTeamID = t2.teamID
   INNER JOIN stadium s ON m.stadiumID = s.stadiumID
   INNER JOIN referee r ON m.refereeID = r.refereeID
-  INNER JOIN streaming_service ss ON m.streamingID = ss.streamingID
+  INNER JOIN streaming_Service ss ON m.streamingID = ss.streamingID
   WHERE m.Date = match_date;
 END$$
-COMMIT;
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS GetMatchInfoByTeam;
+DELIMITER $$
 CREATE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
 BEGIN
   SELECT 
@@ -605,10 +624,10 @@ BEGIN
   INNER JOIN streaming_service ss ON m.streamingID = ss.streamingID
   WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
 END$$
-COMMIT;
+DELIMITER ;
 
 
--- Requirement: Matches must be in round order
+DELIMITER $$
 DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
 CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
 BEGIN
@@ -619,27 +638,23 @@ BEGIN
     DECLARE matchIndex INT DEFAULT 0;
     DECLARE offset INT DEFAULT 0;
 
-    -- Count number of matches and rounds
     SELECT COUNT(*) INTO matchCount
     FROM `match`
     WHERE bracketID = in_bracketID;
     SET totalRounds = LOG2(matchCount + 1);
 
-    -- Create temporary table to track the match order in case matchID isn't completely numerically ordered
     DROP TEMPORARY TABLE IF EXISTS temp_matches;
     CREATE TEMPORARY TABLE temp_matches (
         idx INT AUTO_INCREMENT PRIMARY KEY,
         matchID INT
     );
 
-    -- This is why the matches need to be in order
     INSERT INTO temp_matches (matchID)
     SELECT matchID
     FROM `match`
     WHERE bracketID = in_bracketID
     ORDER BY matchID;
 
-    -- Assigning rounds to matches
     SET roundNumber = 1;
     SET offset = 0;
 
@@ -659,11 +674,11 @@ BEGIN
         SET roundNumber = roundNumber + 1;
     END WHILE;
 END$$
-COMMIT;
+DELIMITER ;
 
 
--- FUNCTIONS
 DROP FUNCTION IF EXISTS CountPlayersByTeam;
+DELIMITER $$
 CREATE FUNCTION CountPlayersByTeam(team_name VARCHAR(100))
 RETURNS INT
 DETERMINISTIC
@@ -675,11 +690,11 @@ BEGIN
   WHERE t.name LIKE team_name;
   RETURN total;
 END$$
-COMMIT;
+DELIMITER ;
 
 
--- TRIGGERS
 DROP TRIGGER IF EXISTS update_championships_won;
+DELIMITER $$
 CREATE TRIGGER update_championships_won
 AFTER INSERT ON playoff
 FOR EACH ROW
@@ -689,10 +704,10 @@ BEGIN
   WHERE TeamID = NEW.ChampionID;
 END$$
 DELIMITER ;
-COMMIT;
 
 
 DROP TRIGGER IF EXISTS new_donation;
+DELIMITER $$
 CREATE TRIGGER new_donation
 AFTER INSERT ON donation
 FOR EACH ROW
@@ -705,10 +720,10 @@ BEGIN
   WHERE teamID = NEW.teamID;
 END$$
 DELIMITER ;
-COMMIT;
 
 
 DROP TRIGGER IF EXISTS ratingAdded; 
+DELIMITER $$
 CREATE TRIGGER ratingAdded
 AFTER INSERT ON rating
 FOR EACH ROW 
@@ -721,10 +736,11 @@ BEGIN
     numRatings = numRatings + 1
     WHERE streamingID = NEW.streamingID;
 END$$
-COMMIT;
+DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS ratingUpdated;
+DELIMITER $$
 CREATE TRIGGER ratingUpdated 
 AFTER UPDATE ON rating
 FOR EACH ROW
@@ -736,10 +752,11 @@ BEGIN
   SET rating = ((rating * numRatings) - OLD.score + NEW.score)/numRatings
   WHERE streamingID = NEW.streamingID;
 END$$
-COMMIT;
+DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS ratingDeleted;
+DELIMITER $$
 CREATE TRIGGER ratingDeleted 
 AFTER DELETE ON rating
 FOR EACH ROW
@@ -759,9 +776,9 @@ BEGIN
   SET rating = 0
   WHERE numRatings = 0;
 END$$
-COMMIT;
+DELIMITER ;
 
--- -------------------------
+
 
 -- Admin privileges
 CREATE USER 'Sadmin';
@@ -780,4 +797,4 @@ GRANT SELECT ON railway.rating TO 'Suser';
 
 GRANT INSERT, UPDATE, DELETE ON railway.rating TO 'Suser';
 -- -------------------------
-COMMIT;
+
