@@ -513,6 +513,7 @@ BEGIN
   WHERE t.Name LIKE CONCAT('%', team_name, '%'); -- FUZZY SEARCH
 END$$
 DELIMITER ;
+COMMIT;
 
 ---
 DELIMITER $$
@@ -525,6 +526,7 @@ BEGIN
   WHERE p.Position LIKE CONCAT('%', position_name, '%'); -- FUZZY SEARCH
 END$$
 DELIMITER ;
+COMMIT;
 
 
 --- SUPPORT FOR GETTING PLAYERS
@@ -537,6 +539,7 @@ BEGIN
   INNER JOIN team t on p.teamID = t.teamID;
 END$$
 DELIMITER ;
+COMMIT;
 
 
 --- SUPPORT FOR SHOWING TEAMS IN A CONFERENCE
@@ -552,6 +555,7 @@ BEGIN
   WHERE c.side LIKE CONCAT('%', conference_name, '%');
 END$$
 DELIMITER ;
+COMMIT;
 
 
 --- SUPPORT FOR SHOWING A TEAM'S INFO
@@ -574,6 +578,7 @@ BEGIN
   WHERE t.Name LIKE CONCAT('%', team_name, '%');
 END$$
 DELIMITER ;
+COMMIT;
 
 
 --- SUPPORT FOR MATCHES INFORMATION, currently using date depending on what we want this may be adjusted later on
@@ -597,6 +602,7 @@ BEGIN
   WHERE m.Date = match_date;
 END$$
 DELIMITER ;
+COMMIT;
 
 
 DROP PROCEDURE IF EXISTS GetMatchInfoByTeam;
@@ -619,6 +625,7 @@ BEGIN
   WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
 END$$
 DELIMITER ;
+COMMIT;
 
 
 -- Requirement: Matches must be in round order
@@ -674,6 +681,7 @@ BEGIN
     END WHILE;
 END$$
 DELIMITER ;
+COMMIT;
 
 
 -- FUNCTIONS
@@ -691,6 +699,7 @@ BEGIN
   RETURN total;
 END$$
 DELIMITER ;
+COMMIT;
 
 
 -- TRIGGERS
@@ -705,6 +714,7 @@ BEGIN
   WHERE TeamID = NEW.ChampionID;
 END@@
 DELIMITER ;
+COMMIT;
 
 
 DROP TRIGGER IF EXISTS new_donation;
@@ -721,6 +731,7 @@ BEGIN
   WHERE teamID = NEW.teamID;
 END@@
 DELIMITER ;
+COMMIT;
 
 
 DROP TRIGGER IF EXISTS ratingAdded; 
@@ -738,6 +749,7 @@ BEGIN
     WHERE streamingID = NEW.streamingID;
 END$$
 DELIMITER ;
+COMMIT;
 
 
 DROP TRIGGER IF EXISTS ratingUpdated;
@@ -754,6 +766,7 @@ BEGIN
   WHERE streamingID = NEW.streamingID;
 END$$
 DELIMITER ;
+COMMIT;
 
 
 DROP TRIGGER IF EXISTS ratingDeleted;
@@ -778,6 +791,7 @@ BEGIN
   WHERE numRatings = 0;
 END$$
 DELIMITER ;
+COMMIT;
 
 -- -------------------------
 
@@ -798,4 +812,4 @@ GRANT SELECT ON railway.rating TO 'Suser';
 
 GRANT INSERT, UPDATE, DELETE ON railway.rating TO 'Suser';
 -- -------------------------
-
+COMMIT;
