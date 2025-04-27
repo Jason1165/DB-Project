@@ -903,7 +903,7 @@ DELIMITER ;
 
 
 -- User privileges
-DROP IF EXISTS ROLE 'Suser';
+DROP ROLE IF EXISTS 'Suser';
 CREATE ROLE 'Suser';
 
 -- Views for public
