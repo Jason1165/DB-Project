@@ -20,26 +20,50 @@ app.config['MYSQL_DB'] = os.environ.get('MYSQLDATABASE', 'db4')
 mysql = MySQL(app)
 app.secret_key = "SOMESECRETKEY"
 
+def execute_sql_file(cursor, filename):
+    delimiter = ';'
+    statement = ''
+    line_number = 0
+
+    with open(filename, 'r') as f:
+        for line in f:
+            line_number += 1
+            line = line.strip()
+            if not line or line.startswith('--'):
+                continue
+
+            if line.lower().startswith('delimiter'):
+                delimiter = line.split()[1]
+                continue
+
+            statement += ' ' + line
+
+            if statement.strip().endswith(delimiter):
+                final_statement = statement.strip()[:-len(delimiter)].strip()
+                if final_statement:
+                    try:
+                        print(f"Line {line_number}: Executing SQL: {final_statement[:100]}...")
+                        cursor.execute(final_statement)
+                    except Exception as e:
+                        print(f"Line {line_number}: Error executing SQL: {final_statement[:100]}...")
+                        print(f"Error: {str(e)}")
+                statement = ''
+    print("DONE.")
+
+
 @app.route('/initdb/<secret>')
 def initdb(secret):
     if secret != os.environ.get('INITDB_SECRET'):
         return "Unauthorized", 403
     try:
         cursor = mysql.connection.cursor()
-        with open('ms4.sql', 'r') as f:
-            sql = f.read()
-        for statement in sql.split(';'):
-            if statement.strip():
-                try:
-                    print(f"Executing SQL: {statement}") 
-                    cursor.execute(statement)
-                except MySQLdb.Error as e:
-                    return f"SQL Error executing statement: '{statement[:50]}...' \nError: {e}", 500
+        execute_sql_file(cursor, 'ms4.sql')  # your SQL file
         mysql.connection.commit()
         cursor.close()
         return "Database successfully initialized!"
     except Exception as e:
-        return f"Error initializing the database: {str(e)}", 500
+        return f"Error: {str(e)}", 500
+
 
 
 

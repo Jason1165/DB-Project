@@ -501,10 +501,9 @@ VALUES
 
 
 COMMIT;
+
 DROP PROCEDURE IF EXISTS GetPlayerByName;
-
 DELIMITER $$
-
 CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
