@@ -174,6 +174,9 @@ def players():
         search_value = request.form.get('player_name')
         search_field = request.form.get('search_field')
 
+        if '(' in search_value or ')' in search_value:
+            search_value = "invalidsearchreturnnothing"
+
         procedures = {
             'name': 'GetPlayerByName',
             'team': 'GetPlayerByTeam',
@@ -215,6 +218,9 @@ def search_bracket():
     if request.method == 'POST':
         search_type = request.form.get('search_type')
         search_value = request.form.get('search_value')
+
+        if '(' in search_value or ')' in search_value:
+            search_value = "invalidsearchreturnnothing"
 
         if search_type == 'team':
             query = "CALL GetBracketByTeam(%s)"
