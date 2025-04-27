@@ -444,3 +444,144 @@ input[type="submit"]:hover {
     text-decoration: none;
     font-weight: bold;
 }
+
+
+
+/* Bracket Stuff Hopefully Nothing Conflist */
+nav {
+    background-color: #d28c28;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav .nav-links {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
+nav a {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+.search-container {
+    background-color: #9998c2;
+    margin: 40px auto;
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+input[type="text"], select {
+    padding: 8px;
+    width: 250px;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    padding: 8px 16px;
+    border: none;
+    background-color: white;
+    color: black;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ddd;
+}
+
+.error {
+    color: red;
+    margin-top: 20px;
+}
+
+.results {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.bracket-link {
+    display: block;
+    background-color: #d3d6d8;
+    color: black;
+    font-weight: bold;
+    margin: 10px auto;
+    width: 400px;
+    padding: 10px;
+    border-radius: 15px;
+    text-decoration: none;
+}
+
+.bracket-link:hover {
+    background-color: #c0c3c5;
+}
+
+/* MORE BRACKET NUM */
+
+h1 {
+text-align: center;
+margin-bottom: 40px;
+font-size: 36px;
+}
+
+.bracket {
+display: flex;
+justify-content: center;
+align-items: flex-start;
+gap: 40px;
+overflow-x: auto;
+padding: 20px;
+}
+
+.round {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 30px;
+}
+
+.match {
+background-color: #d3d6d8;
+color: black;
+font-weight: bold;
+padding: 8px 12px;
+border-radius: 8px;
+min-width: 120px;
+text-align: center;
+}
+
+.match a {
+color: black;
+text-decoration: none;
+display: block;
+}
+
+.match a:hover {
+text-decoration: underline;
+}
+
+.champion {
+font-size: 24px;
+color: #f5a623;
+margin-top: 30px;
+font-weight: bold;
+}
