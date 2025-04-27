@@ -677,30 +677,6 @@ END$$
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS GetBracketByTeam;
-DELIMITER $$
-CREATE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
-BEGIN
-    SELECT DISTINCT m.bracketID
-    FROM `match` m
-    JOIN team t1 ON m.homeTeamID = t1.teamID
-    JOIN team t2 ON m.visitingTeamID = t2.teamID
-    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name LIKE CONCAT('%', teamName,'%');
-END$$
-DELIMITER;
-
-
-DROP PROCEDURE IF EXISTS GetBracketBySeason;
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
-BEGIN
-    SELECT DISTINCT b.bracketID
-    FROM bracket b
-    WHERE b.season LIKE CONCAT('%', season, '%');
-END$$
-DELIMITER ;
-
-
 DROP FUNCTION IF EXISTS countPlayersByTeam;
 DELIMITER $$
 CREATE FUNCTION countPlayersByTeam(inTeamID INT)
