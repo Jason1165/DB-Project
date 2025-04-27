@@ -104,7 +104,7 @@ def signup():
         )
 
         if existing_user:
-            error = "Registration failed. Check if you inputted username and password correctly."
+            error = "Username already taken. Try another one."
             return render_template("register.html", error=error)
 
         hashed_password = generate_password_hash(password)
