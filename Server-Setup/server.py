@@ -14,7 +14,7 @@ app.config['MYSQL_HOST'] = os.environ.get('MYSQLHOST', '127.0.0.1')
 app.config['MYSQL_PORT'] = int(os.environ.get('MYSQLPORT', 3306))
 app.config['MYSQL_USER'] = os.environ.get('MYSQLUSER', 'root')
 app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQLPASSWORD', '')
-app.config['MYSQL_DB'] = os.environ.get('MYSQLDATABASE', 'db4')
+app.config['MYSQL_DB'] = os.environ.get('MYSQLDATABASE', 'railway')
 
 
 mysql = MySQL(app)
@@ -30,12 +30,16 @@ def initdb(secret):
             sql = f.read()
         for statement in sql.split(';'):
             if statement.strip():
-                cursor.execute(statement)
+                try:
+                    cursor.execute(statement)
+                except MySQLdb.Error as e:
+                    return f"SQL Error executing statement: '{statement[:50]}...' \nError: {e}", 500
         mysql.connection.commit()
         cursor.close()
         return "Database successfully initialized!"
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Error initializing the database: {str(e)}", 500
+
 
 
 def execute_query(query, params = None, fetchone = False, fetchall = False, commit = False):
@@ -195,7 +199,7 @@ def search_bracket():
         brackets = execute_query(
             query,
             (search_value,),
-            fetchall=True
+            fetchall=True  # ✅ Fetch all results, not just one
         )
 
         if not brackets:
@@ -351,89 +355,6 @@ def teams():
     )
 
     return render_template('teams.html', teams_data=teams_data)
-
-@app.route('/team/<int:team_id>')
-def team_detail(team_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    # Get basic team information
-    team = execute_query(
-        """
-        SELECT t.*, c.side AS conference_name
-        FROM team t
-        LEFT JOIN conference c ON t.conferenceID = c.conferenceID
-        WHERE t.teamID = %s
-        """,
-        (team_id,),
-        fetchone=True
-    )
-
-    if not team:
-        return "Team not found", 404
-
-    # Get team players
-    players = execute_query(
-        """
-        SELECT p.playerID, p.name, p.position, p.number, p.height, p.age, p.salary
-        FROM player p
-        WHERE p.teamID = %s
-        ORDER BY p.position, p.name
-        """,
-        (team_id,),
-        fetchall=True
-    )
-
-    # Get coach information
-    coach = execute_query(
-        """
-        SELECT c.*
-        FROM coach c
-        WHERE c.coachID = %s
-        """,
-        (team['coachID'],),
-        fetchone=True
-    )
-
-    # Get stadium information
-    stadium = execute_query(
-        """
-        SELECT s.*
-        FROM stadium s
-        WHERE s.stadiumID = %s
-        """,
-        (team['stadiumID'],),
-        fetchone=True
-    )
-
-    # Get top 3 referees (simplified for now)
-    refs = execute_query(
-        """
-        SELECT r.*
-        FROM referee r
-        LIMIT 3
-        """,
-        fetchall=True
-    )
-
-    # Get sponsor information
-    sponsor = execute_query(
-        """
-        SELECT s.*
-        FROM sponsor s
-        WHERE s.sponsorID = %s
-        """,
-        (team['sponsorID'],),
-        fetchone=True
-    )
-
-    return render_template('team_detail.html',
-                          team=team,
-                          players=players,
-                          coach=coach,
-                          stadium=stadium,
-                          refs=refs,
-                          sponsor=sponsor)
 
 @app.route('/streaming_services/<int:service_id>', methods=['GET', 'POST'])
 def manage_rating(service_id):
