@@ -117,27 +117,126 @@ INSERT INTO referee VALUES
 (10, 9, 'Dick Bavetta', 84, '1975-12-02', '2014-08-20');
 
 
-INSERT INTO player VALUES
-(1, 1, 'Nikola Jokic', 'C', 15, 83, 29, 47.6),
-(2, 2, 'Mikal Bridges', 'SF', 1, 78, 27, 23.3),
-(3, 3, 'Jordan Poole', 'SG', 13, 76, 24, 27.5),
-(4, 4, 'Stephen Curry', 'PG', 30, 74, 36, 51.9),
-(5, 5, 'Lauri Markkanen', 'PF', 23, 84, 27, 18.0),
-(6, 6, 'Victor Wembanyama', 'PF', 1, 88, 20, 12.5),
-(7, 7, 'DeAaron Fox', 'PG', 5, 75, 26, 32.6),
-(8, 8, 'Jimmy Butler', 'SF', 22, 79, 34, 45.2),
-(9, 9, 'Cade Cunningham', 'PG', 2, 78, 22, 11.06),
-(10, 10, 'Jalen Brunson', 'PG', 11, 74, 27, 26.35),
-(11, 1, 'Christian Braun', 'SG', 0, 79, 23, 2.94),
-(12, 2, 'Michael Jordan', 'SG', 23, 78, 60, 33.14),
-(13, 6, 'Kobe Bryant', 'SG', 24, 78, 41, 25.0),
-(14, 8, 'Dwyane Wade', 'SG', 3, 76, 42, 20.0),
-(15, 10, 'Patrick Ewing', 'C', 33, 84, 62, 18.72),
-(16, 2, 'Magic Johnson', 'PG', 32, 81, 64, 14.66),
-(17, 4, 'Wilt Chamberlain', 'C', 13, 85, 63, 10.0),
-(18, 3, 'Larry Bird', 'SF', 33, 81, 67, 7.07),
-(19, 5, 'John Stockton', 'PG', 12, 73, 62, 6.0),
-(20, 9, 'Bill Russell', 'C', 6, 82, 89, 0.1);
+INSERT INTO player (teamID, name, position, number, height, age, salary, picLink) VALUES
+(1, 'Jamal Murray', 'Point Guard', 27, 76, 27, 33.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1627750.png'),
+(1, 'Christian Braun', 'Shooting Guard', 0, 80, 23, 3.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631128.png'),
+(1, 'Michael Porter Jr.', 'Small Forward', 1, 82, 25, 35.8, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629008.png'),
+(1, 'Aaron Gordon', 'Power Forward', 50, 80, 28, 22.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203932.png'),
+(1, 'Nikola Jokic', 'Center', 15, 83, 29, 46.2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203999.png'),
+
+(2, 'Keon Johnson', 'Point Guard', 45, 76, 22, 2.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630553.png'),
+(2, 'Cam Thomas', 'Shooting Guard', 24, 75, 23, 2.5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630560.png'),
+(2, 'Jalen Wilson', 'Small Forward', 22, 80, 23, 1.7, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630592.png'),
+(2, 'Trendon Watford', 'Power Forward', 2, 81, 24, 2.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630570.png'),
+(2, 'Nic Claxton', 'Center', 33, 83, 25, 10.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629651.png'),
+
+(3, 'Jordan Poole', 'Point Guard', 13, 76, 24, 30, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629673.png'),
+(3, 'Bub Carrington', 'Shooting Guard', 8, 76, 19, 4, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1642267.png'),
+(3, 'Bilal Coulibaly', 'Small Forward', 0, 78, 19, 6.2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1641731.png'),
+(3, 'Tristan Vukcevic', 'Power Forward', 0, 83, 21, 2.5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1641774.png'),
+(3, 'Sadiq Bey', 'Center', 14, 79, 25, 5.5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630180.png'),
+
+(4, 'Stephen Curry', 'Point Guard', 30, 74, 36, 51.9, 'https://cdn.nba.com/headshots/nba/latest/1040x760/201939.png'),
+(4, 'Moses Moody', 'Shooting Guard', 4, 77, 21, 3.9, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630541.png'),
+(4, 'Jonathan Kuminga', 'Small Forward', 0, 80, 21, 6.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630228.png'),
+(4, 'Draymond Green', 'Power Forward', 23, 78, 34, 24.1, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203110.png'),
+(4, 'Quinten Post', 'Center', 21, 84, 24, 1.8, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1642366.png'),
+
+(5, 'Keyonte George', 'Point Guard', 3, 76, 20, 3, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1641718.png'),
+(5, 'Jordan Clarkson', 'Shooting Guard', 00, 76, 31, 14, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203903.png'),
+(5, 'Lauri Markkanen', 'Small Forward', 23, 84, 27, 17.3, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628374.png'),
+(5, 'John Collins', 'Power Forward', 20, 81, 26, 26.6, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628381.png'),
+(5, 'Walker Kessler', 'Center', 24, 84, 22, 2.9, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631117.png'),
+
+(6, 'Chris Paul', 'Point Guard', 3, 72, 39, 30, 'https://cdn.nba.com/headshots/nba/latest/1040x760/101108.png'),
+(6, 'Devin Vassell', 'Shooting Guard', 24, 77, 23, 27, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630170.png'),
+(6, 'Keldon Johnson', 'Small Forward', 0, 78, 24, 20, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629640.png'),
+(6, 'Jeremy Sochan', 'Power Forward', 10, 80, 20, 5.4, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631110.png'),
+(6, 'Victor Wembanyama', 'Center', 1, 88, 20, 12.2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1641705.png'),
+
+(7, 'Markelle Fultz', 'Point Guard', 20, 76, 25, 17, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628365.png'),
+(7, 'Malik Monk', 'Shooting Guard', 0, 74, 26, 9.9, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628370.png'),
+(7, 'Keegan Murray', 'Small Forward', 13, 80, 23, 8.4, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631099.png'),
+(7, 'Trey Lyles', 'Power Forward', 41, 81, 28, 8, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1626168.png'),
+(7, 'Jonas Valanciunas', 'Center', 17, 84, 32, 15, 'https://cdn.nba.com/headshots/nba/latest/1040x760/202685.png'),
+
+(8, 'Terry Rozier III', 'Point Guard', 2, 73, 30, 24, 'https://cdn.nba.com/teams/static/heat/images/roster/2425/600_trozier.jpg?imwidth=1920'),
+(8, 'Tyler Herro', 'Shooting Guard', 14, 77, 24, 27, 'https://cdn.nba.com/teams/static/heat/images/roster/2425/600_therro.jpg?imwidth=1920'),
+(8, 'Jaime Jaquez Jr.', 'Small Forward', 11, 78, 23, 3.5, 'https://cdn.nba.com/teams/static/heat/images/roster/2425/600_jjaquez.jpg?imwidth=1920'),
+(8, 'Kevin Love', 'Power Forward', 42, 80, 35, 3.8, 'https://cdn.nba.com/teams/static/heat/images/roster/2425/600_klove.jpg?imwidth=1920'),
+(8, 'Bam Adebayo', 'Center', 13, 81, 26, 34.8, 'https://cdn.nba.com/teams/static/heat/images/roster/2425/600_badebayo.jpg?imwidth=1920'),
+
+(9, 'Cade Cunningham', 'Point Guard', 2, 79, 22, 13.9, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630595.png'),
+(9, 'Malik Beasley', 'Shooting Guard', 5, 76, 27, 2.7, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1627736.png'),
+(9, 'Tim Hardaway Jr.', 'Small Forward', 8, 77, 32, 16.2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203501.png'),
+(9, 'Tobias Harris', 'Power Forward', 12, 81, 31, 16, 'https://cdn.nba.com/headshots/nba/latest/1040x760/202699.png'),
+(9, 'Jalen Duren', 'Center', 0, 82, 20, 4.6, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631105.png'),
+
+(10, 'Jalen Brunson', 'Point Guard', 11, 74, 27, 26, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628973.png'),
+(10, 'Mikal Bridges', 'Shooting Guard', 25, 78, 27, 23.3, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628969.png'),
+(10, 'Josh Hart', 'Small Forward', 3, 77, 29, 18, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628404.png'),
+(10, 'Karl-Anthony Towns', 'Power Forward', 32, 83, 28, 36, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1626157.png'),
+(10, 'Mitchell Robinson', 'Center', 23, 84, 26, 15.7, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629011.png'),
+
+(11, 'Jrue Holiday', 'Point Guard', 4, 76, 33, 34.9, 'https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/1040x760/201950.png?111'),
+(11, 'Derrick White', 'Shooting Guard', 9, 76, 29, 18, 'https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/1040x760/1628401.png?111'),
+(11, 'Jayson Tatum', 'Small Forward', 0, 80, 26, 32.6, 'https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/1040x760/1628369.png?111'),
+(11, 'Kristaps Porzingis', 'Power Forward', 8, 86, 28, 30.1, 'https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/1040x760/204001.png?111'),
+(11, 'Al Horford', 'Center', 42, 81, 37, 10, 'https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/1040x760/201143.png?111'),
+
+(12, 'Tyrese Maxey', 'Point Guard', 0, 74, 23, 34.8, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630178.png'),
+(12, 'Quentin Grimes', 'Shooting Guard', 5, 77, 24, 4, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629656.png'),
+(12, 'Paul George', 'Small Forward', 8, 80, 34, 30, 'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4251.png'),
+(12, 'Kelly Oubre Jr.', 'Power Forward', 9, 79, 28, 9, 'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3133603.png&w=350&h=254'),
+(12, 'Andre Drummond', 'Center', 1, 82, 30, 3.3, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203083.png'), 
+
+(13, 'Damian Lillard', 'Point Guard', 0, 74, 33, 45.6, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203081.png'),
+(13, 'Gary Trent Jr.', 'Shooting Guard', 5, 77, 25, 18.5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629018.png'),
+(13, 'Kyle Kuzma', 'Small Forward', 18, 81, 28, 25, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628398.png'),
+(13, 'Giannis Antetokounmpo', 'Power Forward', 34, 83, 30, 48, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203507.png'),
+(13, 'Brook Lopez', 'Center', 11, 84, 36, 23, 'https://cdn.nba.com/headshots/nba/latest/1040x760/201572.png'),
+
+(14, 'Coby White', 'Point Guard', 0, 77, 24, 12.5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629632.png'),
+(14, 'Kevin Huerter', 'Shooting Guard', 13, 79, 25, 16.8, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628989.png'),
+(14, 'Patrick Williams', 'Small Forward', 44, 80, 22, 7.7, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630172.png'),
+(14, 'Julian Phillips', 'Power Forward', 15, 79, 20, 2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1641763.png'),
+(14, 'Nikola Vucevic', 'Center', 9, 83, 33, 18, 'https://cdn.nba.com/headshots/nba/latest/1040x760/202696.png'),
+
+(15, 'Darius Garland', 'Point Guard', 10, 73, 24, 36.7, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629636.png'),
+(15, 'Donovan Mitchell', 'Shooting Guard', 45, 74, 27, 34.8, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628378.png'),
+(15, 'Isaac Okoro', 'Small Forward', 35, 77, 23, 8.9, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630171.png'),
+(15, 'Evan Mobley', 'Power Forward', 4, 83, 23, 11.2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630596.png'),
+(15, 'Jarrett Allen', 'Center', 31, 82, 26, 20, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628386.png'),
+
+(16, 'Devin Booker', 'Point Guard', 1, 77, 27, 36, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1626164.png'),
+(16, 'Bradley Beal', 'Shooting Guard', 3, 76, 30, 50.2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203078.png'),
+(16, 'Kevin Durant', 'Small Forward', 35, 82, 35, 47.6, 'https://cdn.nba.com/headshots/nba/latest/1040x760/201142.png'),
+(16, 'Royce O Neale', 'Power Forward', 00, 78, 31, 9.5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1626220.png'),
+(16, 'Mason Plumlee', 'Center', 22, 83, 34, 5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/203486.png'),
+
+(17, 'Kyrie Irving', 'Point Guard', 11, 74, 33, 41, 'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/6442.png&h=80&w=110&scale=crop'),
+(17, 'Klay Thompson', 'Shooting Guard', 31, 77, 35, 15.9, 'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/6475.png&h=80&w=110&scale=crop'),
+(17, 'Caleb Martin', 'Small Forward', 16, 77, 29, 8.1, 'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/3138160.png&h=80&w=110&scale=crop'),
+(17, 'Anthony Davis', 'Power Forward', 3, 82, 32, 43.2, 'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/6583.png&h=80&w=110&scale=crop'),
+(17, 'Daniel Gafford', 'Center', 21, 82, 26, 13.4, 'https://a.espncdn.com/combiner/i?img=/i/headshots/nba/players/full/4278049.png&h=80&w=110&scale=crop'),
+
+(18, 'Gabe Vincent', 'Point Guard', 7, 74, 28, 11, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629216.png'),
+(18, 'Austin Reaves', 'Shooting Guard', 15, 77, 26, 13.5, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1630559.png'),
+(18, 'LeBron James', 'Small Forward', 23, 81, 39, 51.4, 'https://cdn.nba.com/headshots/nba/latest/1040x760/2544.png'),
+(18, 'Rui Hachimura', 'Power Forward', 28, 80, 26, 17, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629060.png'),
+(18, 'Christian Koloko', 'Center', 10, 84, 24, 2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631132.png'),
+
+(19, 'James Harden', 'Point Guard', 1, 77, 34, 35.6, 'https://cdn.nba.com/headshots/nba/latest/1040x760/201935.png'),
+(19, 'Norman Powell', 'Shooting Guard', 24, 76, 30, 18, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1626181.png'),
+(19, 'Kawhi Leonard', 'Small Forward', 2, 79, 32, 45.6, 'https://cdn.nba.com/headshots/nba/latest/1040x760/202695.png'),
+(19, 'Nicolas Batum', 'Power Forward', 33, 80, 35, 10.8, 'https://cdn.nba.com/headshots/nba/latest/1040x760/201587.png'),
+(19, 'Ivica Zubac', 'Center', 40, 84, 27, 11, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1627826.png'),
+
+(20, 'Shai Gilgeous-Alexander', 'Point Guard', 2, 78, 25, 33.4, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1628983.png'),
+(20, 'Luguentz Dort', 'Shooting Guard', 5, 76, 25, 15.3, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629652.png'),
+(20, 'Kenrich Williams', 'Small Forward', 34, 78, 29, 6.2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1629026.png'),
+(20, 'Jaylin Williams', 'Power Forward', 6, 78, 22, 2, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631119.png'),
+(20, 'Chet Holmgren', 'Center', 7, 84, 22, 10.9, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1631096.png');
 
 
 INSERT INTO donation (donationID, teamID, sponsorID, amount) VALUES

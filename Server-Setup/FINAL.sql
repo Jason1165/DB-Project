@@ -1,7 +1,7 @@
 SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS `ratingAuditLog`;
 DROP TABLE IF EXISTS `rating`;
--- DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `match`;
 DROP TABLE IF EXISTS `playoff`;
 DROP TABLE IF EXISTS `donation`;
@@ -158,12 +158,12 @@ CREATE TABLE `match` (
 );
 
 
--- CREATE TABLE user (
---     u_id INT AUTO_INCREMENT,
---     username VARCHAR(25) UNIQUE,
---     password VARCHAR(255),
---     PRIMARY KEY(u_id)
--- );
+CREATE TABLE user (
+    u_id INT AUTO_INCREMENT,
+    username VARCHAR(25) UNIQUE,
+    password VARCHAR(255),
+    PRIMARY KEY(u_id)
+);
 
 
 CREATE TABLE rating (
@@ -188,7 +188,6 @@ CREATE TABLE ratingAuditLog (
     PRIMARY KEY(auditNum)
 );
 
-COMMIT;
 
 -- -------------------------
 
@@ -309,6 +308,7 @@ INSERT INTO referee VALUES
 (8, 2, 'David Guthrie', 48, '2005-03-18', NULL),
 (9, 6, 'Joey Crawford', 72, '1977-05-12', '2016-04-10'),
 (10, 9, 'Dick Bavetta', 84, '1975-12-02', '2014-08-20');
+
 
 INSERT INTO player (teamID, name, position, number, height, age, salary, picLink) VALUES
 (1, 'Jamal Murray', 'Point Guard', 27, 76, 27, 33.0, 'https://cdn.nba.com/headshots/nba/latest/1040x760/1627750.png'),
@@ -598,73 +598,72 @@ VALUES
 (117, 20, 17, 6, 2, 5, 10, 109, 112, 91.95, '2020-05-09'),
 (118, 15, 20, 4, 4, 2, 10, 122, 115, 93.50, '2020-05-13');
 
-COMMIT;
 
+-- -------------------------
 
-DROP PROCEDURE IF EXISTS GetPlayerByName;
+-- PROCEDURES
+
+--- SUPPORT FOR SEARCH BAR and PLAYER PAGE FROM MILESTONE 2
 DELIMITER $$
-CREATE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
+CREATE OR REPLACE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
-  FROM player p
-  INNER JOIN team t on p.teamID = t.teamID
-  WHERE p.Name LIKE CONCAT('%', player_name, '%'); 
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE p.Name LIKE CONCAT('%', player_name, '%'); -- FUZZY SEARCH
 END$$
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS GetPlayerByTeam;
+--- 
 DELIMITER $$
-CREATE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
+CREATE OR REPLACE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
-  FROM player p
-  INNER JOIN team t on p.teamID = t.teamID
-  WHERE t.Name LIKE CONCAT('%', team_name, '%');
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE t.Name LIKE CONCAT('%', team_name, '%'); -- FUZZY SEARCH
 END$$
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS GetPlayerByPosition;
+---
 DELIMITER $$
-CREATE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
+CREATE OR REPLACE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
-  FROM player p
-  INNER JOIN team t on p.teamID = t.teamID
-  WHERE p.Position LIKE CONCAT('%', position_name, '%'); 
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE p.Position LIKE CONCAT('%', position_name, '%'); -- FUZZY SEARCH
 END$$
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS GetAllPlayers;
+--- SUPPORT FOR GETTING PLAYERS
 DELIMITER $$
-CREATE PROCEDURE GetAllPlayers()
+CREATE OR REPLACE PROCEDURE GetAllPlayers()
 BEGIN
   SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
-  FROM player p
-  INNER JOIN team t on p.teamID = t.teamID;
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID;
 END$$
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS GetTeamsInConference;
+--- SUPPORT FOR SHOWING TEAMS IN A CONFERENCE
 DELIMITER $$
-CREATE PROCEDURE GetTeamsInConference(IN conference_name VARCHAR(100))
+CREATE OR REPLACE PROCEDURE GetTeamsInConference(IN conference_name VARCHAR(100))
 BEGIN
   SELECT 
     t.teamID, t.Name, t.Championships_Won, t.playoffs_won, t.earnings, 
     c.side AS ConferenceSide
-  FROM team t
-  INNER JOIN conference c ON t.conferenceID = c.conferenceID
+  FROM Team t
+  INNER JOIN Conference c ON t.conferenceID = c.conferenceID
   WHERE c.side LIKE CONCAT('%', conference_name, '%');
 END$$
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS GetTeamInfo;
+--- SUPPORT FOR SHOWING A TEAM'S INFO
+--- MIGHT BE MORE IN CASE IM FORGETTING SOME ATTRIBUTES
 DELIMITER $$
-CREATE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
+CREATE OR REPLACE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
 BEGIN
   SELECT
     t.TeamID, t.Name AS TeamName, t.Championships_Won, t.Playoffs_Won, t.Earnings,
@@ -673,18 +672,17 @@ BEGIN
     sp.Name AS SponsorName, sp.Money AS SponsorMoney,
     co.Side AS ConferenceSide
   FROM Team t
-  INNER JOIN coach c ON t.coachID = c.coachID
-  INNER JOIN stadium s ON t.stadiumID = s.stadiumID
-  INNER JOIN sponsor sp ON t.sponsorID = sp.sponsorID
-  INNER JOIN conference co ON t.conferenceID = co.conferenceID
+  INNER JOIN Coach c ON t.coachID = c.coachID
+  INNER JOIN Stadium s ON t.stadiumID = s.stadiumID
+  INNER JOIN Sponsor sp ON t.sponsorID = sp.sponsorID
+  INNER JOIN Conference co ON t.conferenceID = co.conferenceID
   WHERE t.Name LIKE CONCAT('%', team_name, '%');
 END$$
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS GetMatchInfoByDate;
+--- SUPPORT FOR MATCHES INFORMATION, currently using date depending on what we want this may be adjusted later on
 DELIMITER $$
-CREATE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
+CREATE OR REPLACE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
 BEGIN
   SELECT 
     m.score, m.Ticket_Cost, m.Date, 
@@ -694,19 +692,17 @@ BEGIN
     r.Name AS RefereeName, 
     ss.Name AS StreamingService
   FROM `match` m
-  INNER JOIN team t1 ON m.HomeTeamID = t1.teamID
-  INNER JOIN team t2 ON m.VisitingTeamID = t2.teamID
-  INNER JOIN stadium s ON m.stadiumID = s.stadiumID
-  INNER JOIN referee r ON m.refereeID = r.refereeID
-  INNER JOIN streaming_Service ss ON m.streamingID = ss.streamingID
+  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN Referee r ON m.refereeID = r.refereeID
+  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
   WHERE m.Date = match_date;
 END$$
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS GetMatchInfoByTeam;
 DELIMITER $$
-CREATE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
+CREATE OR REPLACE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
 BEGIN
   SELECT 
     m.score, m.Ticket_Cost, m.Date, 
@@ -716,18 +712,18 @@ BEGIN
     r.Name AS RefereeName, 
     ss.Name AS StreamingService
   FROM `match` m
-  INNER JOIN team t1 ON m.HomeTeamID = t1.teamID
-  INNER JOIN team t2 ON m.VisitingTeamID = t2.teamID
-  INNER JOIN stadium s ON m.stadiumID = s.stadiumID
-  INNER JOIN referee r ON m.refereeID = r.refereeID
-  INNER JOIN streaming_service ss ON m.streamingID = ss.streamingID
+  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN Referee r ON m.refereeID = r.refereeID
+  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
   WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
 END$$
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS OrganizeBracketMatches;
+-- Requirement: Matches must be in round order
 DELIMITER $$
+DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
 CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
 BEGIN
     DECLARE matchCount INT;
@@ -737,23 +733,27 @@ BEGIN
     DECLARE matchIndex INT DEFAULT 0;
     DECLARE offset INT DEFAULT 0;
 
+    -- Count number of matches and rounds
     SELECT COUNT(*) INTO matchCount
     FROM `match`
     WHERE bracketID = in_bracketID;
     SET totalRounds = LOG2(matchCount + 1);
 
+    -- Create temporary table to track the match order in case matchID isn't completely numerically ordered
     DROP TEMPORARY TABLE IF EXISTS temp_matches;
     CREATE TEMPORARY TABLE temp_matches (
         idx INT AUTO_INCREMENT PRIMARY KEY,
         matchID INT
     );
 
+    -- This is why the matches need to be in order
     INSERT INTO temp_matches (matchID)
     SELECT matchID
     FROM `match`
     WHERE bracketID = in_bracketID
     ORDER BY matchID;
 
+    -- Assigning rounds to matches
     SET roundNumber = 1;
     SET offset = 0;
 
@@ -776,22 +776,20 @@ END$$
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS GetBracketByTeam;
+-- Bracket search procedures
 DELIMITER $$
-CREATE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
+CREATE OR REPLACE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
 BEGIN
     SELECT DISTINCT m.bracketID
     FROM `match` m
     JOIN team t1 ON m.homeTeamID = t1.teamID
     JOIN team t2 ON m.visitingTeamID = t2.teamID
-    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name LIKE CONCAT('%', teamName,'%');
+    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name = CONCAT('%', teamName,'%');
 END$$
-DELIMITER ;
+DELIMITER;
 
-
-DROP PROCEDURE IF EXISTS GetBracketBySeason;
 DELIMITER $$
-CREATE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
+CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
 BEGIN
     SELECT DISTINCT b.bracketID
     FROM bracket b
@@ -799,7 +797,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-
+-- FUNCTIONS
 DROP FUNCTION IF EXISTS countPlayersByTeam;
 DELIMITER $$
 CREATE FUNCTION countPlayersByTeam(inTeamID INT)
@@ -814,22 +812,22 @@ BEGIN
 END$$
 DELIMITER ;
 
-
+-- TRIGGERS
 DROP TRIGGER IF EXISTS update_championships_won;
-DELIMITER $$
+DELIMITER @@
 CREATE TRIGGER update_championships_won
-AFTER INSERT ON playoff
+AFTER INSERT ON Playoff
 FOR EACH ROW
 BEGIN
-  UPDATE team
+  UPDATE Team
   SET Championships_Won = Championships_Won + 1
   WHERE TeamID = NEW.ChampionID;
-END$$
+END@@
 DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS new_donation;
-DELIMITER $$
+DELIMITER @@
 CREATE TRIGGER new_donation
 AFTER INSERT ON donation
 FOR EACH ROW
@@ -840,9 +838,8 @@ BEGIN
   UPDATE team 
   SET earnings = earnings + new.amount
   WHERE teamID = NEW.teamID;
-END$$
+END@@
 DELIMITER ;
-
 
 DROP TRIGGER IF EXISTS ratingAdded; 
 DELIMITER $$
@@ -860,7 +857,6 @@ BEGIN
 END$$
 DELIMITER ;
 
-
 DROP TRIGGER IF EXISTS ratingUpdated;
 DELIMITER $$
 CREATE TRIGGER ratingUpdated 
@@ -875,7 +871,6 @@ BEGIN
   WHERE streamingID = NEW.streamingID;
 END$$
 DELIMITER ;
-
 
 DROP TRIGGER IF EXISTS ratingDeleted;
 DELIMITER $$
@@ -900,7 +895,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-
+-- -------------------------
 
 -- User privileges
 DROP ROLE IF EXISTS 'Suser';
