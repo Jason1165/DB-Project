@@ -96,6 +96,11 @@ def signup():
         if len(username) < 1 or len(password) < 1:
             error = "Username or password should be longer than one character."
             return render_template("register.html", error=error)
+        
+        if not (username.isalnum()) or not (password.isalnum()):
+            error = "Username and password must only contain letters and numbers."
+            return render_template("register.html", error=error)
+
 
         existing_user = execute_query (
             "SELECT * FROM user WHERE username = %s",
