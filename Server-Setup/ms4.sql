@@ -685,7 +685,7 @@ BEGIN
     FROM `match` m
     JOIN team t1 ON m.homeTeamID = t1.teamID
     JOIN team t2 ON m.visitingTeamID = t2.teamID
-    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name = CONCAT('%', teamName,'%');
+    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name LIKE CONCAT('%', teamName,'%');
 END$$
 DELIMITER;
 
