@@ -1,5 +1,5 @@
 SET foreign_key_checks = 0;
-DROP TABLE IF EXISTS `ratingauditlog`;
+DROP TABLE IF EXISTS `ratingAuditlog`;
 DROP TABLE IF EXISTS `rating`;
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `match`;
