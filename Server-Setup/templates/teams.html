@@ -18,7 +18,7 @@
                 {% if team.conferenceID == 2 %}
                     {% set west_exists = true %}
                     <div class="team-card">
-                        <p class="team-info">
+                        <p class="team-info" onclick="window.location.href='{{ url_for('team_detail', team_id=team.teamID) }}'">
                             <!-- {{ team.name }} - Western Conference<br>
                                  Championships: {{ team.championships_won }} | Playoff Wins: {{ team.playoffs_won }} | Earnings: ${{ team.earnings }}M -->
                             {{ team.name }}
@@ -39,7 +39,7 @@
                 {% if team.conferenceID == 1 %}
                     {% set east_exists = true %}
                     <div class="team-card">
-                        <p class="team-info">
+                        <p class="team-info" onclick="window.location.href='{{ url_for('team_detail', team_id=team.teamID) }}'">
                             {{ team.name }}
                         </p>
                     </div>

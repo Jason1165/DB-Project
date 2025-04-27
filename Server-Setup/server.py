@@ -3,20 +3,67 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import pandas as pd
 from werkzeug.security import check_password_hash, generate_password_hash
+import os
 
 app = Flask(__name__)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
-app.config['MYSQL_HOST'] = '127.0.0.1'
-app.config["MYSQL_USER"] = 'root'
-app.config["MYSQL_PASSWORD"] = ''
-app.config["MYSQL_DB"] = 'db4'
-app.config['MYSQL_PORT'] = 3306 # 3303 for mofei
+app.config['MYSQL_HOST'] = os.environ.get('MYSQLHOST', '127.0.0.1')
+app.config['MYSQL_PORT'] = int(os.environ.get('MYSQLPORT', 3306))
+app.config['MYSQL_USER'] = os.environ.get('MYSQLUSER', 'root')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQLPASSWORD', '')
+app.config['MYSQL_DB'] = os.environ.get('MYSQLDATABASE', 'db4')
+
 
 mysql = MySQL(app)
 app.secret_key = "SOMESECRETKEY"
+
+def execute_sql_file(cursor, filename):
+    delimiter = ';'
+    statement = ''
+    line_number = 0
+
+    with open(filename, 'r') as f:
+        for line in f:
+            line_number += 1
+            line = line.strip()
+            if not line or line.startswith('--'):
+                continue
+
+            if line.lower().startswith('delimiter'):
+                delimiter = line.split()[1]
+                continue
+
+            statement += ' ' + line
+
+            if statement.strip().endswith(delimiter):
+                final_statement = statement.strip()[:-len(delimiter)].strip()
+                if final_statement:
+                    try:
+                        print(f"Line {line_number}: Executing SQL: {final_statement[:100]}...")
+                        cursor.execute(final_statement)
+                    except Exception as e:
+                        print(f"Line {line_number}: Error executing SQL: {final_statement[:100]}...")
+                        print(f"Error: {str(e)}")
+                statement = ''
+    print("DONE.")
+
+
+@app.route('/initdb/<secret>')
+def initdb(secret):
+    if secret != os.environ.get('INITDB_SECRET'):
+        return "Unauthorized", 403
+    try:
+        cursor = mysql.connection.cursor()
+        execute_sql_file(cursor, 'ms4.sql')  # your SQL file
+        mysql.connection.commit()
+        cursor.close()
+        return "Database successfully initialized!"
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
 
 def execute_query(query, params = None, fetchone = False, fetchall = False, commit = False):
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -175,7 +222,7 @@ def search_bracket():
         brackets = execute_query(
             query,
             (search_value,),
-            fetchall=True  # ✅ Fetch all results, not just one
+            fetchall=True
         )
 
         if not brackets:
@@ -310,7 +357,7 @@ def view_bracket(bracket_id):
 
 @app.route('/streaming_services')
 def streaming_services():
-    services = execute_query("SELECT * FROM Streaming_Service", fetchall=True)
+    services = execute_query("SELECT * FROM streaming_service", fetchall=True)
     return render_template('streaming_services.html', services=services)
 
 @app.route('/teams', methods=['GET'])
@@ -332,6 +379,89 @@ def teams():
 
     return render_template('teams.html', teams_data=teams_data)
 
+@app.route('/team/<int:team_id>')
+def team_detail(team_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    # Get basic team information
+    team = execute_query(
+        """
+        SELECT t.*, c.side AS conference_name
+        FROM team t
+        LEFT JOIN conference c ON t.conferenceID = c.conferenceID
+        WHERE t.teamID = %s
+        """,
+        (team_id,),
+        fetchone=True
+    )
+
+    if not team:
+        return "Team not found", 404
+
+    # Get team players
+    players = execute_query(
+        """
+        SELECT p.playerID, p.name, p.position, p.number, p.height, p.age, p.salary
+        FROM player p
+        WHERE p.teamID = %s
+        ORDER BY p.position, p.name
+        """,
+        (team_id,),
+        fetchall=True
+    )
+
+    # Get coach information
+    coach = execute_query(
+        """
+        SELECT c.*
+        FROM coach c
+        WHERE c.coachID = %s
+        """,
+        (team['coachID'],),
+        fetchone=True
+    )
+
+    # Get stadium information
+    stadium = execute_query(
+        """
+        SELECT s.*
+        FROM stadium s
+        WHERE s.stadiumID = %s
+        """,
+        (team['stadiumID'],),
+        fetchone=True
+    )
+
+    # Get top 3 referees (simplified for now)
+    refs = execute_query(
+        """
+        SELECT r.*
+        FROM referee r
+        LIMIT 3
+        """,
+        fetchall=True
+    )
+
+    # Get sponsor information
+    sponsor = execute_query(
+        """
+        SELECT s.*
+        FROM sponsor s
+        WHERE s.sponsorID = %s
+        """,
+        (team['sponsorID'],),
+        fetchone=True
+    )
+
+    return render_template('team_detail.html',
+                          team=team,
+                          players=players,
+                          coach=coach,
+                          stadium=stadium,
+                          refs=refs,
+                          sponsor=sponsor)
+
 @app.route('/streaming_services/<int:service_id>', methods=['GET', 'POST'])
 def manage_rating(service_id):
     if 'user_id' not in session:
@@ -342,32 +472,32 @@ def manage_rating(service_id):
     if request.method == 'POST':
         score = int(request.form.get('rating'))
         existing = execute_query(
-            "SELECT * FROM Rating WHERE u_id = %s AND streamingID = %s",
+            "SELECT * FROM rating WHERE u_id = %s AND streamingID = %s",
             (user_id, service_id),
             fetchone=True
         )
 
         if existing:
             execute_query(
-                "UPDATE Rating SET score = %s WHERE u_id = %s AND streamingID = %s",
+                "UPDATE rating SET score = %s WHERE u_id = %s AND streamingID = %s",
                 (score, user_id, service_id),
                 commit=True
             )
         else:
             execute_query(
-                "INSERT INTO Rating (score, u_id, streamingID) VALUES (%s, %s, %s)",
+                "INSERT INTO rating (score, u_id, streamingID) VALUES (%s, %s, %s)",
                 (score, user_id, service_id),
                 commit=True
             )
 
     ratings = execute_query(
-        "SELECT r.score, u.username FROM Rating r JOIN User u ON r.u_id = u.u_id WHERE streamingID = %s",
+        "SELECT r.score, u.username FROM rating r JOIN user u ON r.u_id = u.u_id WHERE streamingID = %s",
         (service_id,),
         fetchall=True
     )
 
     my_rating = execute_query(
-        "SELECT * FROM Rating WHERE u_id = %s AND streamingID = %s",
+        "SELECT * FROM rating WHERE u_id = %s AND streamingID = %s",
         (user_id, service_id),
         fetchone=True
     )
@@ -383,7 +513,7 @@ def delete_rating(service_id):
     user_id = session['user_id']
 
     execute_query(
-        "DELETE FROM Rating WHERE u_id = %s AND streamingID = %s",
+        "DELETE FROM rating WHERE u_id = %s AND streamingID = %s",
         (user_id, service_id),
         commit=True
     )
@@ -395,4 +525,3 @@ def delete_rating(service_id):
 
 if __name__ == '__main__':
     app.run(port=8792)
-

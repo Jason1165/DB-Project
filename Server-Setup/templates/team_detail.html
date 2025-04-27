@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block content %}
+<div class="team-detail-container">
+    <div class="team-header">
+        <h1>{{ team.name }} - {{ team.conference_name }}</h1>
+    </div>
+
+    <div class="players-section">
+        <div class="players-cards">
+            {% for player in players[:3] %}
+            <div class="player-icon-card">
+                <a href="{{ url_for('player_detail', player_id=player.playerID) }}" class="player-link">
+                    <div class="player-name">{{ player.name }}</div>
+                    <div class="player-photo">Player Icon Photo</div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="earnings-section">
+        <div class="earnings-card">
+            <h2>Team Earnings:</h2>
+
+            <div class="earnings-item">
+                <h3>Biggest Sponsor Name: {{ sponsor.name if sponsor else 'N/A' }}</h3>
+                <!-- <p>Money donated: ${{ "%.2f"|format(sponsor.amount if sponsor and 'amount' in sponsor else 0) }}M</p> -->
+            </div>
+
+            <div class="earnings-item">
+                <h3>Championship Won: {{ team.championships_won }}</h3>
+                <p>Reward money: ${{ "%.2f"|format(team.championships_won * 10) }}M</p>
+            </div>
+
+            <div class="earnings-item">
+                <h3>Playoff Won: {{ team.playoffs_won }}</h3>
+                <p>Reward Money: ${{ "%.2f"|format(team.playoffs_won * 5) }}M</p>
+            </div>
+
+            <div class="earnings-item">
+                <h3>Stadium Revenue: ${{ "%.2f"|format(stadium.revenue if stadium and 'revenue' in stadium else 0) }}M</h3>
+            </div>
+
+            <div class="earnings-item total">
+                <h3>Total Earned: ${{ "%.2f"|format(team.earnings) }}M</h3>
+                <p>Sum of playoffs, championships, biggest sponsor, and stadium revenue</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-cards-section">
+        <div class="info-card coach-card">
+            <div class="info-details">
+                <h3>Coach Name: {{ coach.name if coach else 'N/A' }}</h3>
+                <p>Age: {{ coach.age if coach and 'age' in coach else 'N/A' }}</p>
+                <p>Start Date: {{ coach.start_date if coach and 'start_date' in coach else 'N/A' }}</p>
+                <p>End Date: {{ coach.end_date if coach and 'end_date' in coach else 'N/A' }}</p>
+            </div>
+            <div class="info-photo">Photo</div>
+        </div>
+
+        <div class="info-card refs-card">
+            <h3>Top 3 Favorite Refs</h3>
+
+            {% for ref in refs %}
+            <div class="ref-item">
+                <p>Pic, {{ ref.name if 'name' in ref else 'N/A' }},
+                   {{ ref.start_date if 'start_date' in ref else 'N/A' }},
+                   {{ ref.end_date if 'end_date' in ref else 'N/A' }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="info-card stadium-card">
+            <div class="info-details">
+                <h3>Home Stadium</h3>
+                <p>Name: {{ stadium.name if stadium else 'N/A' }}</p>
+                <p>Location: {{ stadium.location if stadium and 'location' in stadium else 'N/A' }}</p>
+                <p>Capacity: {{ stadium.capacity if stadium and 'capacity' in stadium else 'N/A' }}</p>
+                <p>Revenue: ${{ "%.2f"|format(stadium.revenue if stadium and 'revenue' in stadium else 0) }}M</p>
+            </div>
+            <div class="info-photo">Photo</div>
+        </div>
+    </div>
+
+    <div class="back-button">
+        <a href="{{ url_for('teams') }}">Back to Teams</a>
+    </div>
+</div>
+{% endblock %}

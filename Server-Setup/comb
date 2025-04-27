@@ -4,6 +4,7 @@
 file1="../CREATE/COMBINED_CREATE.sql"
 file2="../INSERT/COMBINED_INSERT.sql"
 file3="../COMMANDS/command.sql"
+file4="../SECURITY/GRANTS.sql"
 
 # Output file name
 output="ms4.sql"
@@ -33,4 +34,12 @@ if [[ -f "$file3" ]]; then
     echo -e "\n-- -------------------------\n" >> "$output"
 else
     echo "File not found: $file3"
+fi
+
+# Combine file4 into output
+if [[ -f "$file4" ]]; then
+    cat "$file4" >> "$output"
+    echo -e "\n-- -------------------------\n" >> "$output"
+else
+    echo "File not found: $file4"
 fi
