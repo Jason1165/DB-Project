@@ -1,39 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Ratings</title>
-</head>
-<body>
-  <div style="text-align: right;">
-    <a href="/logout">Logout</a>
+{% extends "base.html" %}
+{% block title %}Ratings{% endblock %}
+{% block content %}
+
+<div id="ratings">
+
+  <div class="banner">
+    <h1>Ratings</h1>
   </div>
-  <h2>Ratings</h2>
+
   {% if my_rating %}
-    <p><strong>Your Rating:</strong> {{ my_rating.score }}</p>
+  <div class="rating-box">
+    <h3><strong>Your Rating:</strong> {{ my_rating.score }}</h3>
 
     <form method="post">
       <label>Update Rating:</label>
       <input type="number" name="rating" min="1" max="5" value="{{ my_rating.score }}" required>
-      <input type="submit" value="Update Rating">
+      <input type="submit" value="Update Rating" class="button">
     </form>
 
     <form method="post" action="{{ url_for('delete_rating', service_id=service_id) }}">
-      <button type="submit">Delete Rating</button>
+      <button type="submit" class="button delete">Delete Rating</button>
     </form>
+  </div>
   {% else %}
+  <div class="rating-box">
     <form method="post">
       <label>Rating:</label>
       <input type="number" name="rating" min="1" max="5" required>
-      <input type="submit" value="Submit Rating">
+      <input type="submit" value="Submit Rating" class="button">
     </form>
+  </div>
   {% endif %}
 
-  <h3>All Ratings</h3>
-  <ul>
-    {% for r in ratings %}
+  <div class="rating-box">
+    <h3>All Ratings</h3>
+    <ul>
+      {% for r in ratings %}
       <li><strong>{{ r.username }}:</strong> {{ r.score }}</li>
-    {% endfor %}
-  </ul>
-</body>
-</html>
+      {% endfor %}
+    </ul>
+  </div>
+
+</div>
+{% endblock %}

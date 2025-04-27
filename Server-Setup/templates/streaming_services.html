@@ -2,7 +2,9 @@
 {% block title %}Streaming Services{% endblock %}
 {% block content %}
 
-<h2>All Streaming Services</h2>
+<div class="banner">
+    <h1>Streaming Services</h1>
+</div>
 
 <div class="card-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5em; margin-top: 2em;">
   {% for service in services %}

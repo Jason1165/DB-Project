@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <title>Register</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-  <form method="post">
-    <label for="username">Username:</label>
-    <input type="text" name="username" id="username"><br>
+  <div id="register">
+    <form method="post">
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="username"><br>
 
-    <label for="password">Password:</label>
-    <input type="password" name="password" id="password"><br>
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password"><br>
 
-    <input type="submit" value="Sign Up"><br>
-  </form>
+      <input type="submit" value="Sign Up"><br>
+    </form>
 
-  {% if error %}
-    <p style="color: red;">{{ error }}</p>
-  {% endif %}
+    {% if error %}
+    <p class="logreg-error">{{ error }}</p>
+    {% endif %}
 
-  <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
+    <p>Already have an account? <a href="{{ url_for('login') }}">Log in here</a>.</p>
+  </div>
 </body>
 </html>
