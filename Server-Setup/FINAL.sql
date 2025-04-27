@@ -1,3 +1,196 @@
+SET foreign_key_checks = 0;
+DROP TABLE IF EXISTS `ratingAuditLog`;
+DROP TABLE IF EXISTS `rating`;
+DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `match`;
+DROP TABLE IF EXISTS `playoff`;
+DROP TABLE IF EXISTS `donation`;
+DROP TABLE IF EXISTS `player`;
+DROP TABLE IF EXISTS `referee`;
+DROP TABLE IF EXISTS `team`;
+DROP TABLE IF EXISTS `bracket`;
+DROP TABLE IF EXISTS `streaming_service`;
+DROP TABLE IF EXISTS `conference`;
+DROP TABLE IF EXISTS `sponsor`;
+DROP TABLE IF EXISTS `stadium`;
+DROP TABLE IF EXISTS `coach`;
+SET foreign_key_checks = 1;
+
+CREATE TABLE coach (
+    coachID INT AUTO_INCREMENT,
+    name VARCHAR(100),
+    age INT,
+    start_date DATE,
+    end_date DATE NULL,
+    salary float,
+    PRIMARY KEY(coachID)
+);
+
+
+CREATE TABLE stadium (
+    stadiumID INT AUTO_INCREMENT,
+    name VARCHAR(100),
+    location VARCHAR(100),
+    capacity INT,
+    revenue INT,
+    PRIMARY KEY(stadiumId)
+);
+
+CREATE TABLE sponsor (
+    sponsorID INT AUTO_INCREMENT,
+    name VARCHAR(100),
+    money FLOAT,
+    PRIMARY KEY(sponsorID)
+);
+
+CREATE TABLE conference (
+    conferenceID INT AUTO_INCREMENT,
+    side VARCHAR(100),
+    PRIMARY KEY (conferenceID)
+);
+
+
+CREATE TABLE streaming_service (
+    streamingID INT AUTO_INCREMENT,
+    name VARCHAR(100),
+    price DECIMAL(5,2),
+    rating FLOAT,
+    numRatings INT,
+    streamingLink VARCHAR(255),
+    PRIMARY KEY (streamingID)
+);
+
+CREATE TABLE bracket (
+    bracketID INT AUTO_INCREMENT,
+    numTeams INT,
+    season VARCHAR(100),
+    PRIMARY KEY (bracketID)
+);
+
+CREATE TABLE team (
+    teamID INT AUTO_INCREMENT,
+    coachID INT,
+    stadiumID INT,
+    sponsorID INT,
+    conferenceID INT,
+    name VARCHAR(100),
+    championships_won INT,
+    playoffs_won INT,
+    earnings FLOAT,
+    PRIMARY KEY(teamID),
+    FOREIGN KEY(coachID) REFERENCES coach(coachID),
+    FOREIGN KEY(stadiumID) REFERENCES stadium(stadiumID),
+    FOREIGN KEY(sponsorID) REFERENCES sponsor(sponsorID),
+    FOREIGN KEY(conferenceID) REFERENCES conference(conferenceID)
+);
+
+
+CREATE TABLE referee (
+    refereeID INT AUTO_INCREMENT,
+    favoriteTeamID INT,
+    name VARCHAR(100),
+    age INT,
+    start_date DATE,
+    end_date DATE NULL,
+    PRIMARY KEY(refereeID),
+    FOREIGN KEY(favoriteTeamID) REFERENCES team(teamID)
+);
+
+
+CREATE TABLE player (
+    playerID INT AUTO_INCREMENT,
+    teamID INT,
+    name VARCHAR(100),
+    position VARCHAR(20),
+    number INT,
+    height int,
+    age INT,
+    salary float,
+    picLink VARCHAR(255),
+    PRIMARY KEY(playerID),
+    FOREIGN KEY(teamID) REFERENCES team(teamID)
+);
+
+
+CREATE TABLE donation (
+    donationID INT AUTO_INCREMENT,
+    teamID INT NOT NULL,
+    sponsorID INT NOT NULL,
+    amount INT,
+    PRIMARY KEY (donationID),
+    FOREIGN KEY (teamID) REFERENCES team(teamID),
+    FOREIGN KEY (sponsorID) REFERENCES sponsor(sponsorID)
+);
+
+CREATE TABLE playoff (
+    playoffID INT AUTO_INCREMENT,
+    bracketID INT,
+    championID INT,
+    MVP INT,
+    PRIMARY KEY(playoffID),
+    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID),
+    FOREIGN KEY(championID) REFERENCES team(teamID),
+    FOREIGN KEY(MVP) REFERENCES player(playerID)
+);
+
+
+-- "match" is a reserved keyword
+CREATE TABLE `match` (
+    matchID INT AUTO_INCREMENT,
+    homeTeamID INT,
+    visitingTeamID INT,
+    stadiumID INT,
+    streamingID INT,
+    refereeID INT,
+    bracketID INT,
+    homeScore INT,
+    visitingScore INT,
+    ticket_cost FLOAT,
+    date DATE,
+    `round` INT DEFAULT NULL,
+    PRIMARY KEY(matchID),
+    FOREIGN KEY(homeTeamID) REFERENCES team(teamID),
+    FOREIGN KEY(visitingTeamID) REFERENCES team(teamID),
+    FOREIGN KEY(stadiumID) REFERENCES stadium(stadiumID),
+    FOREIGN KEY(refereeID) REFERENCES referee(refereeID),
+    FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
+    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID)
+);
+
+
+CREATE TABLE user (
+    u_id INT AUTO_INCREMENT,
+    username VARCHAR(25) UNIQUE,
+    password VARCHAR(255),
+    PRIMARY KEY(u_id)
+);
+
+
+CREATE TABLE rating (
+    score INT,
+    u_id INT,
+    streamingID INT,
+    FOREIGN KEY(u_id) REFERENCES user(u_id),
+    FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
+    PRIMARY KEY(u_id, streamingID)
+);
+
+CREATE TABLE ratingAuditLog (
+    auditNum INT NOT NULL AUTO_INCREMENT,
+    Date DATE,
+    Time TIME,
+    Type VARCHAR(10),
+    u_id INT,
+    streamingID INT,
+    score FLOAT,
+    FOREIGN KEY(u_id) REFERENCES user(u_id),
+    FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
+    PRIMARY KEY(auditNum)
+);
+
+
+-- -------------------------
+
 INSERT INTO coach VALUES 
 (1, 'Michael Malone', 52, '2015-06-15', NULL, 4),
 (2, 'Jacque Vaughn', 49, '2022-11-01', NULL, 3.5),
@@ -405,3 +598,334 @@ VALUES
 (117, 20, 17, 6, 2, 5, 10, 109, 112, 91.95, '2020-05-09'),
 (118, 15, 20, 4, 4, 2, 10, 122, 115, 93.50, '2020-05-13');
 
+
+-- -------------------------
+
+-- PROCEDURES
+
+--- SUPPORT FOR SEARCH BAR and PLAYER PAGE FROM MILESTONE 2
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
+BEGIN
+  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE p.Name LIKE CONCAT('%', player_name, '%'); -- FUZZY SEARCH
+END$$
+DELIMITER ;
+
+--- 
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
+BEGIN
+  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE t.Name LIKE CONCAT('%', team_name, '%'); -- FUZZY SEARCH
+END$$
+DELIMITER ;
+
+---
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
+BEGIN
+  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID
+  WHERE p.Position LIKE CONCAT('%', position_name, '%'); -- FUZZY SEARCH
+END$$
+DELIMITER ;
+
+--- SUPPORT FOR GETTING PLAYERS
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetAllPlayers()
+BEGIN
+  SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
+  FROM Player p
+  INNER JOIN Team t on p.teamID = t.teamID;
+END$$
+DELIMITER ;
+
+--- SUPPORT FOR SHOWING TEAMS IN A CONFERENCE
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetTeamsInConference(IN conference_name VARCHAR(100))
+BEGIN
+  SELECT 
+    t.teamID, t.Name, t.Championships_Won, t.playoffs_won, t.earnings, 
+    c.side AS ConferenceSide
+  FROM Team t
+  INNER JOIN Conference c ON t.conferenceID = c.conferenceID
+  WHERE c.side LIKE CONCAT('%', conference_name, '%');
+END$$
+DELIMITER ;
+
+
+--- SUPPORT FOR SHOWING A TEAM'S INFO
+--- MIGHT BE MORE IN CASE IM FORGETTING SOME ATTRIBUTES
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
+BEGIN
+  SELECT
+    t.TeamID, t.Name AS TeamName, t.Championships_Won, t.Playoffs_Won, t.Earnings,
+    c.Name AS CoachName,
+    s.Name AS StadiumName, s.Location AS StadiumLocation, s.Capacity AS StadiumCapacity,
+    sp.Name AS SponsorName, sp.Money AS SponsorMoney,
+    co.Side AS ConferenceSide
+  FROM Team t
+  INNER JOIN Coach c ON t.coachID = c.coachID
+  INNER JOIN Stadium s ON t.stadiumID = s.stadiumID
+  INNER JOIN Sponsor sp ON t.sponsorID = sp.sponsorID
+  INNER JOIN Conference co ON t.conferenceID = co.conferenceID
+  WHERE t.Name LIKE CONCAT('%', team_name, '%');
+END$$
+DELIMITER ;
+
+--- SUPPORT FOR MATCHES INFORMATION, currently using date depending on what we want this may be adjusted later on
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
+BEGIN
+  SELECT 
+    m.score, m.Ticket_Cost, m.Date, 
+    t1.Name AS HomeTeamName, 
+    t2.Name AS VisitingTeamName, 
+    s.Name AS StadiumName, 
+    r.Name AS RefereeName, 
+    ss.Name AS StreamingService
+  FROM `match` m
+  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN Referee r ON m.refereeID = r.refereeID
+  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
+  WHERE m.Date = match_date;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
+BEGIN
+  SELECT 
+    m.score, m.Ticket_Cost, m.Date, 
+    t1.Name AS HomeTeamName, 
+    t2.Name AS VisitingTeamName, 
+    s.Name AS StadiumName, 
+    r.Name AS RefereeName, 
+    ss.Name AS StreamingService
+  FROM `match` m
+  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
+  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
+  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
+  INNER JOIN Referee r ON m.refereeID = r.refereeID
+  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
+  WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
+END$$
+DELIMITER ;
+
+-- Requirement: Matches must be in round order
+DELIMITER $$
+DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
+CREATE PROCEDURE OrganizeBracketMatches(IN in_bracketID INT)
+BEGIN
+    DECLARE matchCount INT;
+    DECLARE totalRounds INT;
+    DECLARE roundSize INT;
+    DECLARE roundNumber INT DEFAULT 1;
+    DECLARE matchIndex INT DEFAULT 0;
+    DECLARE offset INT DEFAULT 0;
+
+    -- Count number of matches and rounds
+    SELECT COUNT(*) INTO matchCount
+    FROM `match`
+    WHERE bracketID = in_bracketID;
+    SET totalRounds = LOG2(matchCount + 1);
+
+    -- Create temporary table to track the match order in case matchID isn't completely numerically ordered
+    DROP TEMPORARY TABLE IF EXISTS temp_matches;
+    CREATE TEMPORARY TABLE temp_matches (
+        idx INT AUTO_INCREMENT PRIMARY KEY,
+        matchID INT
+    );
+
+    -- This is why the matches need to be in order
+    INSERT INTO temp_matches (matchID)
+    SELECT matchID
+    FROM `match`
+    WHERE bracketID = in_bracketID
+    ORDER BY matchID;
+
+    -- Assigning rounds to matches
+    SET roundNumber = 1;
+    SET offset = 0;
+
+    WHILE roundNumber <= totalRounds DO
+        SET roundSize = POWER(2, totalRounds - roundNumber);
+        SET matchIndex = 0;
+
+        WHILE matchIndex < roundSize DO
+            UPDATE `match` AS m
+            JOIN temp_matches tm ON m.matchID = tm.matchID
+            SET m.round = roundNumber
+            WHERE tm.idx = offset + matchIndex + 1;
+            SET matchIndex = matchIndex + 1;
+        END WHILE;
+
+        SET offset = offset + roundSize;
+        SET roundNumber = roundNumber + 1;
+    END WHILE;
+END$$
+DELIMITER ;
+
+
+-- Bracket search procedures
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
+BEGIN
+    SELECT DISTINCT m.bracketID
+    FROM `match` m
+    JOIN team t1 ON m.homeTeamID = t1.teamID
+    JOIN team t2 ON m.visitingTeamID = t2.teamID
+    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name = CONCAT('%', teamName,'%');
+END$$
+DELIMITER;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
+BEGIN
+    SELECT DISTINCT b.bracketID
+    FROM bracket b
+    WHERE b.season LIKE CONCAT('%', season, '%');
+END$$
+DELIMITER ;
+
+-- FUNCTIONS
+DROP FUNCTION IF EXISTS countPlayersByTeam;
+DELIMITER $$
+CREATE FUNCTION countPlayersByTeam(inTeamID INT)
+RETURNS INT
+DETERMINISTIC
+BEGIN
+  DECLARE total INT;
+  SELECT COUNT(*) INTO total
+  FROM player p
+  WHERE p.teamID = inTeamID;
+  RETURN total;
+END$$
+DELIMITER ;
+
+-- TRIGGERS
+DROP TRIGGER IF EXISTS update_championships_won;
+DELIMITER @@
+CREATE TRIGGER update_championships_won
+AFTER INSERT ON Playoff
+FOR EACH ROW
+BEGIN
+  UPDATE Team
+  SET Championships_Won = Championships_Won + 1
+  WHERE TeamID = NEW.ChampionID;
+END@@
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS new_donation;
+DELIMITER @@
+CREATE TRIGGER new_donation
+AFTER INSERT ON donation
+FOR EACH ROW
+BEGIN
+  UPDATE sponsor
+  SET money = money + NEW.amount
+  WHERE sponsorID = NEW.sponsorID;
+  UPDATE team 
+  SET earnings = earnings + new.amount
+  WHERE teamID = NEW.teamID;
+END@@
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS ratingAdded; 
+DELIMITER $$
+CREATE TRIGGER ratingAdded
+AFTER INSERT ON rating
+FOR EACH ROW 
+BEGIN
+    INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+    (CURRENT_DATE, CURRENT_TIMESTAMP, "INSERT", NEW.score, NEW.u_id, NEW.streamingID);
+
+    UPDATE streaming_service 
+    SET rating = (rating*numRatings + NEW.score)/(numRatings + 1),
+    numRatings = numRatings + 1
+    WHERE streamingID = NEW.streamingID;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS ratingUpdated;
+DELIMITER $$
+CREATE TRIGGER ratingUpdated 
+AFTER UPDATE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, score, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "UPDATE", NEW.score, NEW.u_id, NEW.streamingID);
+
+  UPDATE streaming_service
+  SET rating = ((rating * numRatings) - OLD.score + NEW.score)/numRatings
+  WHERE streamingID = NEW.streamingID;
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS ratingDeleted;
+DELIMITER $$
+CREATE TRIGGER ratingDeleted 
+AFTER DELETE ON rating
+FOR EACH ROW
+BEGIN
+  INSERT INTO ratingAuditLog (Date, Time, Type, u_id, streamingID) VALUES
+  (CURRENT_DATE, CURRENT_TIMESTAMP, "DELETE", OLD.u_id, OLD.streamingID);
+  
+  UPDATE streaming_service
+  SET rating = CASE 
+    WHEN (numRatings - 1) = 0 THEN 0
+    ELSE ((rating * numRatings) - OLD.score) / (numRatings - 1)
+  END,
+  numRatings = numRatings - 1
+  WHERE streamingID = OLD.streamingID;
+
+  UPDATE streaming_service 
+  SET rating = 0
+  WHERE numRatings = 0;
+END$$
+DELIMITER ;
+
+-- -------------------------
+
+-- User privileges
+DROP IF EXISTS ROLE 'Suser';
+CREATE ROLE 'Suser';
+
+-- Views for public
+DROP VIEW IF EXISTS playerPublic;
+CREATE VIEW playerPublic AS 
+SELECT name, position, number, height, age, salary
+FROM railway.player;
+
+DROP VIEW IF EXISTS teamPublic;
+CREATE OR REPLACE VIEW teamPublic AS
+SELECT name, championships_won, playoffs_won, earnings
+FROM railway.team;
+
+DROP VIEW IF EXISTS ratingPublic;
+CREATE OR REPLACE VIEW ratingPublic AS
+SELECT score
+FROM railway.rating;
+-- Granting said views
+GRANT SELECT ON railway.playerPublic TO 'Suser';
+GRANT SELECT ON railway.teamPublic TO 'Suser';
+GRANT SELECT ON railway.ratingPublic TO 'Suser';
+-- I don't believe we need these as of now because these aren't really searchable
+-- uncomment if it breaks things in accessing said info, then comment the views out 
+-- GRANT SELECT ON db4.match TO 'Suser';
+-- GRANT SELECT ON db4.streaming_service TO 'Suser';
+-- GRANT SELECT ON db4.bracket TO 'Suser';
+-- GRANT SELECT ON db4.conference TO 'Suser';
+-- GRANT SELECT ON db4.rating TO 'Suser';
+
+GRANT INSERT, UPDATE, DELETE ON railway.rating TO 'Suser';
