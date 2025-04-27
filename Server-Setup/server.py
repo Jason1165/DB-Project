@@ -192,7 +192,7 @@ def players():
         # Get all players with team names
         players_data = execute_query(
             """
-            SELECT p.playerID, p.name AS Name, p.position AS Position, p.number AS Number,
+            SELECT p.playerID, p.picLink, p.name AS Name, p.position AS Position, p.number AS Number,
                 p.height AS Height, p.age AS Age, p.salary AS Salary,
                 t.name AS TeamName
             FROM player p
@@ -414,7 +414,7 @@ def team_detail(team_id):
     # Get team players
     players = execute_query(
         """
-        SELECT p.playerID, p.name, p.position, p.number, p.height, p.age, p.salary
+        SELECT p.playerID, p.picLink, p.name, p.position, p.number, p.height, p.age, p.salary
         FROM player p
         WHERE p.teamID = %s
         ORDER BY p.position, p.name

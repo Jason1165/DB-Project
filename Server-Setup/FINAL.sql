@@ -607,7 +607,7 @@ VALUES
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetPlayerByName(IN player_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM Player p
   INNER JOIN Team t on p.teamID = t.teamID
   WHERE p.Name LIKE CONCAT('%', player_name, '%'); -- FUZZY SEARCH
@@ -618,7 +618,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetPlayerByTeam(IN team_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM Player p
   INNER JOIN Team t on p.teamID = t.teamID
   WHERE t.Name LIKE CONCAT('%', team_name, '%'); -- FUZZY SEARCH
@@ -629,7 +629,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetPlayerByPosition(IN position_name VARCHAR(100))
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.Number, p.Height, p.Age, p.Salary, t.Name as TeamName
   FROM Player p
   INNER JOIN Team t on p.teamID = t.teamID
   WHERE p.Position LIKE CONCAT('%', position_name, '%'); -- FUZZY SEARCH
@@ -640,7 +640,7 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetAllPlayers()
 BEGIN
-  SELECT p.playerID, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
+  SELECT p.playerID, p.picLink, p.Name, p.Position, p.height, p.age, p.salary, t.name as team_name
   FROM Player p
   INNER JOIN Team t on p.teamID = t.teamID;
 END$$

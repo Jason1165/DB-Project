@@ -54,16 +54,20 @@
     {% if players_data %}
         {% for player in players_data %}
         <div class="player-card" onclick="window.location.href='{{ url_for('player_detail', player_id=player.playerID) }}'">
+          <div class="player-card-image">
+            <img src="{{ player.picLink }}" alt="Picture of {{ player.name }}">
+          </div>
+          <div class="player-info-container">
             <p class="player-info">
-                Pic,
-                {% if 'Name' in player %}{{ player.Name }}{% else %}{{ player.name }}{% endif %},
-                {% if 'TeamName' in player %}{{ player.TeamName }}{% else %}{{ player.team_name }}{% endif %},
-                {% if 'Number' in player %}{{ player.Number }}{% else %}{{ player.number }}{% endif %},
-                {% if 'Position' in player %}{{ player.Position }}{% else %}{{ player.position }}{% endif %},
-                {% if 'Age' in player %}{{ player.Age }}{% else %}{{ player.age }}{% endif %},
-                {% if 'Height' in player %}{{ player.Height }}{% else %}{{ player.height }}{% endif %},
-                ${% if 'Salary' in player %}{{ "%.2f"|format(player.Salary) }}{% else %}{{ "%.2f"|format(player.salary) }}{% endif %}M
+              {% if 'Name' in player %}{{ player.Name }}{% else %}{{ player.name }}{% endif %},
+              {% if 'TeamName' in player %}{{ player.TeamName }}{% else %}{{ player.team_name }}{% endif %},
+              {% if 'Number' in player %}{{ player.Number }}{% else %}{{ player.number }}{% endif %},
+              {% if 'Position' in player %}{{ player.Position }}{% else %}{{ player.position }}{% endif %}
+              <!-- {% if 'Age' in player %}{{ player.Age }}{% else %}{{ player.age }}{% endif %},
+                   {% if 'Height' in player %}{{ player.Height }}{% else %}{{ player.height }}{% endif %},
+                   ${% if 'Salary' in player %}{{ "%.2f"|format(player.Salary) }}{% else %}{{ "%.2f"|format(player.salary) }}{% endif %}M -->
             </p>
+          </div>
         </div>
         {% endfor %}
     {% else %}
