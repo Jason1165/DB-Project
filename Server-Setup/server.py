@@ -491,7 +491,7 @@ def manage_rating(service_id):
             )
 
     ratings = execute_query(
-        "SELECT r.score, u.username FROM rating r JOIN sser u ON r.u_id = u.u_id WHERE streamingID = %s",
+        "SELECT r.score, u.username FROM rating r JOIN user u ON r.u_id = u.u_id WHERE streamingID = %s",
         (service_id,),
         fetchall=True
     )
