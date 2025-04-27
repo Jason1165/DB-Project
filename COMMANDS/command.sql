@@ -172,6 +172,28 @@ BEGIN
 END$$
 DELIMITER ;
 
+
+-- Bracket search procedures
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
+BEGIN
+    SELECT DISTINCT m.bracketID
+    FROM `match` m
+    JOIN team t1 ON m.homeTeamID = t1.teamID
+    JOIN team t2 ON m.visitingTeamID = t2.teamID
+    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name = CONCAT('%', teamName,'%');
+END$$
+DELIMITER;
+
+DELIMITER $$
+CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
+BEGIN
+    SELECT DISTINCT b.bracketID
+    FROM bracket b
+    WHERE b.season LIKE CONCAT('%', season, '%');
+END$$
+DELIMITER ;
+
 -- FUNCTIONS
 DELIMITER $$
 CREATE FUNCTION CountPlayersByTeam(team_name VARCHAR(100))
