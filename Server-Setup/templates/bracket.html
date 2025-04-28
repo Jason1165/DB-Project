@@ -28,7 +28,7 @@
     <h2>Brackets Found:</h2>
     {% for bracket in brackets %}
         <a class="bracket-link" href="{{ url_for('view_bracket', bracket_id=bracket.bracketID) }}">
-            View Bracket {{ bracket.bracketID }}
+            View {{ bracket.season }} Bracket
         </a>
     {% endfor %}
 </div>

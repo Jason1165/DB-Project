@@ -181,18 +181,19 @@ DELIMITER ;
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetBracketByTeam(IN teamName VARCHAR(255))
 BEGIN
-    SELECT DISTINCT m.bracketID
+    SELECT DISTINCT b.bracketID, b.season
     FROM `match` m
+    JOIN bracket b ON m.bracketID = b.bracketID
     JOIN team t1 ON m.homeTeamID = t1.teamID
     JOIN team t2 ON m.visitingTeamID = t2.teamID
-    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name = CONCAT('%', teamName,'%');
+    WHERE t1.name LIKE CONCAT('%', teamName, '%') OR t2.name LIKE CONCAT('%', teamName,'%');
 END$$
-DELIMITER;
+DELIMITER ;
 
 DELIMITER $$
 CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
 BEGIN
-    SELECT DISTINCT b.bracketID
+    SELECT DISTINCT b.bracketID, b.season
     FROM bracket b
     WHERE b.season LIKE CONCAT('%', season, '%');
 END$$

@@ -2,7 +2,9 @@
 {% block title %}Bracket View - Bracket {{ bracket_id }}{% endblock %}
 {% block content %}
 
-<h1>Bracket {{ bracket_id }}</h1>
+<div class="banner">
+  <h1>Bracket {{ bracket_id }}</h1>
+</div>
 
 <div class="bracket">
   {% for round_num, matches in bracket.items() %}
