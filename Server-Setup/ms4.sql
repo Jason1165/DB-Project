@@ -792,7 +792,7 @@ DELIMITER ;
 
 DROP PROCEDURE IF EXISTS GetBracketBySeason;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
+CREATE PROCEDURE GetBracketBySeason(IN season VARCHAR(255))
 BEGIN
     SELECT DISTINCT b.bracketID, b.season
     FROM bracket b
