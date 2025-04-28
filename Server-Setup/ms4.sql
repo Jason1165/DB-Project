@@ -1,6 +1,6 @@
 SET foreign_key_checks = 0;
-DROP TABLE IF EXISTS `ratingAuditLog`;
-DROP TABLE IF EXISTS `rating`;
+-- DROP TABLE IF EXISTS `ratingAuditLog`;
+-- DROP TABLE IF EXISTS `rating`;
 -- DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `match`;
 DROP TABLE IF EXISTS `playoff`;
@@ -166,27 +166,27 @@ CREATE TABLE `match` (
 -- );
 
 
-CREATE TABLE rating (
-    score INT,
-    u_id INT,
-    streamingID INT,
-    FOREIGN KEY(u_id) REFERENCES user(u_id),
-    FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
-    PRIMARY KEY(u_id, streamingID)
-);
+-- CREATE TABLE rating (
+--     score INT,
+--     u_id INT,
+--     streamingID INT,
+--     FOREIGN KEY(u_id) REFERENCES user(u_id),
+--     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
+--     PRIMARY KEY(u_id, streamingID)
+-- );
 
-CREATE TABLE ratingAuditLog (
-    auditNum INT NOT NULL AUTO_INCREMENT,
-    Date DATE,
-    Time TIME,
-    Type VARCHAR(10),
-    u_id INT,
-    streamingID INT,
-    score FLOAT,
-    FOREIGN KEY(u_id) REFERENCES user(u_id),
-    FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
-    PRIMARY KEY(auditNum)
-);
+-- CREATE TABLE ratingAuditLog (
+--     auditNum INT NOT NULL AUTO_INCREMENT,
+--     Date DATE,
+--     Time TIME,
+--     Type VARCHAR(10),
+--     u_id INT,
+--     streamingID INT,
+--     score FLOAT,
+--     FOREIGN KEY(u_id) REFERENCES user(u_id),
+--     FOREIGN KEY(streamingID) REFERENCES streaming_service(streamingID),
+--     PRIMARY KEY(auditNum)
+-- );
 
 COMMIT;
 
