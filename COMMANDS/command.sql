@@ -61,67 +61,6 @@ END$$
 DELIMITER ;
 
 
---- SUPPORT FOR SHOWING A TEAM'S INFO
---- MIGHT BE MORE IN CASE IM FORGETTING SOME ATTRIBUTES
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
-BEGIN
-  SELECT
-    t.TeamID, t.Name AS TeamName, t.Championships_Won, t.Playoffs_Won, t.Earnings,
-    c.Name AS CoachName,
-    s.Name AS StadiumName, s.Location AS StadiumLocation, s.Capacity AS StadiumCapacity,
-    sp.Name AS SponsorName, sp.Money AS SponsorMoney,
-    co.Side AS ConferenceSide
-  FROM Team t
-  INNER JOIN Coach c ON t.coachID = c.coachID
-  INNER JOIN Stadium s ON t.stadiumID = s.stadiumID
-  INNER JOIN Sponsor sp ON t.sponsorID = sp.sponsorID
-  INNER JOIN Conference co ON t.conferenceID = co.conferenceID
-  WHERE t.Name LIKE CONCAT('%', team_name, '%');
-END$$
-DELIMITER ;
-
---- SUPPORT FOR MATCHES INFORMATION, currently using date depending on what we want this may be adjusted later on
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
-BEGIN
-  SELECT 
-    m.score, m.Ticket_Cost, m.Date, 
-    t1.Name AS HomeTeamName, 
-    t2.Name AS VisitingTeamName, 
-    s.Name AS StadiumName, 
-    r.Name AS RefereeName, 
-    ss.Name AS StreamingService
-  FROM `match` m
-  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
-  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
-  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
-  INNER JOIN Referee r ON m.refereeID = r.refereeID
-  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
-  WHERE m.Date = match_date;
-END$$
-DELIMITER ;
-
-DELIMITER $$
-CREATE OR REPLACE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
-BEGIN
-  SELECT 
-    m.score, m.Ticket_Cost, m.Date, 
-    t1.Name AS HomeTeamName, 
-    t2.Name AS VisitingTeamName, 
-    s.Name AS StadiumName, 
-    r.Name AS RefereeName, 
-    ss.Name AS StreamingService
-  FROM `match` m
-  INNER JOIN Team t1 ON m.HomeTeamID = t1.teamID
-  INNER JOIN Team t2 ON m.VisitingTeamID = t2.teamID
-  INNER JOIN Stadium s ON m.stadiumID = s.stadiumID
-  INNER JOIN Referee r ON m.refereeID = r.refereeID
-  INNER JOIN Streaming_Service ss ON m.streamingID = ss.streamingID
-  WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
-END$$
-DELIMITER ;
-
 -- Requirement: Matches must be in round order
 DELIMITER $$
 DROP PROCEDURE IF EXISTS OrganizeBracketMatches$$
@@ -214,17 +153,7 @@ END$$
 DELIMITER ;
 
 -- TRIGGERS
-DROP TRIGGER IF EXISTS update_championships_won;
-DELIMITER @@
-CREATE TRIGGER update_championships_won
-AFTER INSERT ON Playoff
-FOR EACH ROW
-BEGIN
-  UPDATE Team
-  SET Championships_Won = Championships_Won + 1
-  WHERE TeamID = NEW.ChampionID;
-END@@
-DELIMITER ;
+
 
 
 DROP TRIGGER IF EXISTS new_donation;

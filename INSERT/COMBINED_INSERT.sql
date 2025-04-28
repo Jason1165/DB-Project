@@ -251,19 +251,6 @@ INSERT INTO donation (donationID, teamID, sponsorID, amount) VALUES
 (9, 4, 10, 8),
 (10, 7, 5, 1);
 
-INSERT INTO playoff VALUES
-(1, 2, 4, 4),
-(2, 4, 8, 8),
-(3, 6, 4, 4),
-(4, 8, 1, 1),
-(5, 10, 10, 10),
-(6, 1, 3, 3),
-(7, 3, 9, 9),
-(8, 5, 7, 7),
-(9, 7, 2, 2),
-(10, 9, 5, 5);
-
-
 INSERT INTO `match` 
 (matchID, homeTeamID, visitingTeamID, stadiumID, streamingID, refereeID, bracketID, homeScore, visitingScore, ticket_cost, date) 
 VALUES

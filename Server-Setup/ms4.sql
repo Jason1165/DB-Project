@@ -444,18 +444,6 @@ INSERT INTO donation (donationID, teamID, sponsorID, amount) VALUES
 (9, 4, 10, 8),
 (10, 7, 5, 1);
 
-INSERT INTO playoff VALUES
-(1, 2, 4, 4),
-(2, 4, 8, 8),
-(3, 6, 4, 4),
-(4, 8, 1, 1),
-(5, 10, 10, 10),
-(6, 1, 3, 3),
-(7, 3, 9, 9),
-(8, 5, 7, 7),
-(9, 7, 2, 2),
-(10, 9, 5, 5);
-
 
 INSERT INTO `match` 
 (matchID, homeTeamID, visitingTeamID, stadiumID, streamingID, refereeID, bracketID, homeScore, visitingScore, ticket_cost, date) 
@@ -663,67 +651,8 @@ DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS GetTeamInfo;
-DELIMITER $$
-CREATE PROCEDURE GetTeamInfo(IN team_name VARCHAR(100))
-BEGIN
-  SELECT
-    t.TeamID, t.Name AS TeamName, t.Championships_Won, t.Playoffs_Won, t.Earnings,
-    c.Name AS CoachName,
-    s.Name AS StadiumName, s.Location AS StadiumLocation, s.Capacity AS StadiumCapacity,
-    sp.Name AS SponsorName, sp.Money AS SponsorMoney,
-    co.Side AS ConferenceSide
-  FROM Team t
-  INNER JOIN coach c ON t.coachID = c.coachID
-  INNER JOIN stadium s ON t.stadiumID = s.stadiumID
-  INNER JOIN sponsor sp ON t.sponsorID = sp.sponsorID
-  INNER JOIN conference co ON t.conferenceID = co.conferenceID
-  WHERE t.Name LIKE CONCAT('%', team_name, '%');
-END$$
-DELIMITER ;
-
-
 DROP PROCEDURE IF EXISTS GetMatchInfoByDate;
-DELIMITER $$
-CREATE PROCEDURE GetMatchInfoByDate(IN match_date DATE)
-BEGIN
-  SELECT 
-    m.score, m.Ticket_Cost, m.Date, 
-    t1.Name AS HomeTeamName, 
-    t2.Name AS VisitingTeamName, 
-    s.Name AS StadiumName, 
-    r.Name AS RefereeName, 
-    ss.Name AS StreamingService
-  FROM `match` m
-  INNER JOIN team t1 ON m.HomeTeamID = t1.teamID
-  INNER JOIN team t2 ON m.VisitingTeamID = t2.teamID
-  INNER JOIN stadium s ON m.stadiumID = s.stadiumID
-  INNER JOIN referee r ON m.refereeID = r.refereeID
-  INNER JOIN streaming_Service ss ON m.streamingID = ss.streamingID
-  WHERE m.Date = match_date;
-END$$
-DELIMITER ;
-
-
 DROP PROCEDURE IF EXISTS GetMatchInfoByTeam;
-DELIMITER $$
-CREATE PROCEDURE GetMatchInfoByTeam(IN team_name VARCHAR(100))
-BEGIN
-  SELECT 
-    m.score, m.Ticket_Cost, m.Date, 
-    t1.Name AS HomeTeamName, 
-    t2.Name AS VisitingTeamName, 
-    s.Name AS StadiumName, 
-    r.Name AS RefereeName, 
-    ss.Name AS StreamingService
-  FROM `match` m
-  INNER JOIN team t1 ON m.HomeTeamID = t1.teamID
-  INNER JOIN team t2 ON m.VisitingTeamID = t2.teamID
-  INNER JOIN stadium s ON m.stadiumID = s.stadiumID
-  INNER JOIN referee r ON m.refereeID = r.refereeID
-  INNER JOIN streaming_service ss ON m.streamingID = ss.streamingID
-  WHERE t1.name LIKE CONCAT('%', team_name, '%') OR t2.name LIKE CONCAT('%', team_name, '%');
-END$$
-DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS OrganizeBracketMatches;
@@ -817,16 +746,6 @@ DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS update_championships_won;
-DELIMITER $$
-CREATE TRIGGER update_championships_won
-AFTER INSERT ON playoff
-FOR EACH ROW
-BEGIN
-  UPDATE team
-  SET Championships_Won = Championships_Won + 1
-  WHERE TeamID = NEW.ChampionID;
-END$$
-DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS new_donation;
@@ -900,7 +819,6 @@ BEGIN
   WHERE numRatings = 0;
 END$$
 DELIMITER ;
-
 
 
 -- User privileges

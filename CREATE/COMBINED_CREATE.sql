@@ -104,18 +104,6 @@ CREATE TABLE donation (
     FOREIGN KEY (sponsorID) REFERENCES sponsor(sponsorID)
 );
 
-CREATE TABLE playoff (
-    playoffID INT AUTO_INCREMENT,
-    bracketID INT,
-    championID INT,
-    MVP INT,
-    PRIMARY KEY(playoffID),
-    FOREIGN KEY(bracketID) REFERENCES bracket(bracketID),
-    FOREIGN KEY(championID) REFERENCES team(teamID),
-    FOREIGN KEY(MVP) REFERENCES player(playerID)
-);
-
-
 -- "match" is a reserved keyword
 CREATE TABLE `match` (
     matchID INT AUTO_INCREMENT,

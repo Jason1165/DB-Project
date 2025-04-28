@@ -7,7 +7,7 @@ file3="../COMMANDS/command.sql"
 file4="../SECURITY/GRANTS.sql"
 
 # Output file name
-output="ms4.sql"
+output="FINAL.sql"
 
 # Empty the output file if it exists
 > "$output"
